@@ -12,6 +12,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "cwise": "^1.0.10",
+    "cwise-compiler": "^1.1.3",
     "mathjs": "^12.4.2",
     "ndarray": "^1.0.19",
     "ndarray-fill": "^1.0.2",

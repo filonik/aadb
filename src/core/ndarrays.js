@@ -1,8 +1,16 @@
 import ndarray from 'ndarray'
-import ndarrayFill from 'ndarray-fill'
+//import ndarrayFill from 'ndarray-fill'
 import ndarrayShow from 'ndarray-show'
 
-import { product } from './arrays'
+import { product, indices } from './arrays'
+
+// Is cwise not working? Something to do with vite bundling?
+// Drop-in replacement for now...
+function ndarrayFill(array, f) {
+  for (let index of indices(array.shape)) {
+    array.set(...index, f(...index))
+  }
+}
 
 export function filledWithShape(shape, f) {
   const length = product(shape)
