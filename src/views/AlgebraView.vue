@@ -21,6 +21,8 @@ import * as SO from '@/core/symbolic/operators'
 
 const route = useRoute()
 
+console.log(route.params)
+
 const toArrExpr = (array) => SA.filledWithShape(array.shape, N.getItemR(array))
 
 const aa = computed(() => {
