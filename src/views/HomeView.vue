@@ -6,7 +6,11 @@ const examples = [
   { name: 'Complex', path: '/2/1729' },
   { name: 'Dual', path: '/2/271' },
   { name: 'Split-Complex', path: '/2/1000' },
-  { name: 'Cross Product', path: '/3/22097675691' },
+  { name: 'Cross Product 3', path: '/3/22097675691' },
+  {
+    name: 'Cross Product 7',
+    path: '/7/9420724044472817913359231958857576279556321419551701413339452371134625317487234594575412213633129284977545312353541791088317531987737529170264353798334173189',
+  },
   { name: 'Quaternion', path: '/4/87982708766312930240990603242' },
   { name: 'Split-Quaternion', path: '/4/44021510534169686206832405320' },
   { name: 'Semi-Quaternion', path: '/4/60303439088322520173111469' },
