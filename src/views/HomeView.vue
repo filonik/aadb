@@ -6,19 +6,25 @@ const examples = [
   { name: 'Complex', path: '/2/1729' },
   { name: 'Dual', path: '/2/271' },
   { name: 'Split-Complex', path: '/2/1000' },
+  { name: 'Quaternion', path: '/4/87982708766312930240990603242' },
   { name: 'Cross Product 3', path: '/3/22097675691' },
   {
     name: 'Cross Product 7',
     path: '/7/9420724044472817913359231958857576279556321419551701413339452371134625317487234594575412213633129284977545312353541791088317531987737529170264353798334173189',
   },
-  { name: 'Quaternion', path: '/4/87982708766312930240990603242' },
-  { name: 'Split-Quaternion', path: '/4/44021510534169686206832405320' },
-  { name: 'Semi-Quaternion', path: '/4/60303439088322520173111469' },
   { name: 'Mat2x2', path: '/4/1149271402132153040968396844560' },
   {
     name: 'Mat3x3',
     path: '/9/220943276835188538518464182763329485131500743123588640769020325047669235747297191158731733067458315738178696805561721464239010470228146074640394026366821986600916842719463761090280111661779684481399542035259074900502043576434849099567818874563499625878357308231395688943124504139908346539008880952631385440101831634136012152334809738011126486145643',
   },
+]
+
+const examplesQuaternion = [
+  { name: 'Quaternion', path: '/4/87982708766312930240990603242' },
+  { name: 'Split-Quaternion', path: '/4/44021510534169686206832405320' },
+  { name: 'Semi-Quaternion', path: '/4/60303439088322520173111469' },
+  { name: 'Split-Semi-Quaternions', path: '/4/118453176091156685244622588' },
+  { name: 'Quarter-Quaternions', path: '/4/2153702084870671244963200' },
 ]
 
 const examplesClifford = [
@@ -107,6 +113,14 @@ const examplesOther = [
       <h3>Clifford Algebras</h3>
       <ul>
         <li v-for="example in examplesClifford" :key="example.path">
+          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+        </li>
+      </ul>
+    </section>
+    <section>
+      <h3>Quaternions</h3>
+      <ul>
+        <li v-for="example in examplesQuaternion" :key="example.path">
           <RouterLink :to="example.path">{{ example.name }}</RouterLink>
         </li>
       </ul>
