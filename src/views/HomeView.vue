@@ -25,6 +25,7 @@ const examplesQuaternion = [
   { name: 'Semi-Quaternion', path: '/4/60303439088322520173111469' },
   { name: 'Split-Semi-Quaternions', path: '/4/118453176091156685244622588' },
   { name: 'Quarter-Quaternions', path: '/4/2153702084870671244963200' },
+  //{ name: 'Hyperbolic Quaternion', path: '/4/45591550478939061264152456839' },
 ]
 
 const examplesClifford = [
@@ -55,6 +56,13 @@ const examplesNPlex = [
   { name: 'Triplex', path: '/3/861254944615' },
   { name: 'Quadplex', path: '/4/383099085122419850349879494560' },
   { name: 'Quintuplex', path: '/5/48585925499306606622667284864728602017927418555776905833309' },
+]
+
+const examplesOlariu = [
+  { name: 'Circular Four-Complex', path: '/4/44021507592014446849521025816' },
+  { name: 'Hyperbolic Four-Complex', path: '/4/44021507575804218608360851360' },
+  { name: 'Planar Four-Complex', path: '/4/766196016546807385150151942578' },
+  { name: 'Polar Four-Complex', path: '/4/383099085122419850349879494560' },
 ]
 
 const examplesOther = [
@@ -129,6 +137,14 @@ const examplesOther = [
       <h3>n-Plex Numbers</h3>
       <ul>
         <li v-for="example in examplesNPlex" :key="example.path">
+          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+        </li>
+      </ul>
+    </section>
+    <section>
+      <h3>Olariu</h3>
+      <ul>
+        <li v-for="example in examplesOlariu" :key="example.path">
           <RouterLink :to="example.path">{{ example.name }}</RouterLink>
         </li>
       </ul>

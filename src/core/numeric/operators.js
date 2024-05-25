@@ -18,6 +18,9 @@ export const div = (x, y) => x / y
 export const quotient = (x, y) => Math.trunc(x / y)
 export const remainder = (x, y) => x % y
 
+export const quo = quotient
+export const rem = remainder
+
 export const add_inv = (x) => 0 - x
 export const mul_inv = (x) => 1 / x
 
@@ -25,6 +28,9 @@ export const min = (x, y) => (x < y ? x : y)
 export const max = (x, y) => (x > y ? x : y)
 
 export const mod = (n, m) => ((n % m) + m) % m
+
+export const isZero = (x, eps = Number.EPSILON) => lt(Math.abs(x), eps)
+export const isClose = (x, y, eps = Number.EPSILON) => isZero(sub(y, x), eps)
 
 export const RR = {
   zero: 0,

@@ -1,4 +1,5 @@
 import * as O from './numeric/operators'
+import * as M from './numeric/monoids'
 
 const length = (array) => array.length
 const minimum = (array) => Math.min(...array)
@@ -28,6 +29,11 @@ export function filledWithShape(shape, f) {
   return _filledWithShape(shape, [])
 }
 
+export const getItem = (array) => (index) => array[index]
+export const itemGetter = (index) => (array) => getItem(array)(index)
+
+export const mapWith = (fn) => (array) => array.map(fn)
+
 export const reduce = ({ append, empty }) =>
   empty === undefined ? (xs) => xs.reduce(append) : (xs) => xs.reduce(append, empty)
 
@@ -43,31 +49,14 @@ export const zipWithLongest =
 
 export const zipWith = zipWithShortest
 
-export const And = {
-  append: O.and,
-  empty: true,
-}
+export const all = reduce(M.And)
+export const any = reduce(M.Or)
 
-export const Or = {
-  append: O.or,
-  empty: false,
-}
+export const sum = reduce(M.Add)
+export const product = reduce(M.Mul)
 
-export const Add = {
-  append: O.add,
-  empty: 0,
-}
-
-export const Mul = {
-  append: O.mul,
-  empty: 1,
-}
-
-export const all = reduce(And)
-export const any = reduce(Or)
-
-export const sum = reduce(Add)
-export const product = reduce(Mul)
+export const eq = (xs, ys) => all(zipWith(O.eq)(xs, ys))
+export const neq = (xs, ys) => any(zipWith(O.neq)(xs, ys))
 
 export const CartesianMul = {
   append: (b, c) => b.flatMap((d) => c.map((e) => [...d, e])),

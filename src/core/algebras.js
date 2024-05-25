@@ -1,9 +1,12 @@
 import ndarray from 'ndarray'
 
 import * as A from './arrays'
+import * as G from './generators'
 import * as O from './numeric/operators'
 
-import { filledWithShape, getItem, getItemR } from './ndarrays'
+import { fromArray, filledWithShape, getItem, getItemR } from './ndarrays'
+
+import { Matrix, pseudoInverse } from 'ml-matrix'
 
 const groupBySorted = (x) => JSON.stringify(x.toSorted())
 
@@ -263,3 +266,56 @@ export const isAntiAlternative = (R) => isQAlternative(R)(R.add_inv(R.one))
 
 export const isPowerAssociative = (R) => isQPowerAssociative(R)(R.one)
 export const isAntiPowerAssociative = (R) => isQPowerAssociative(R)(R.add_inv(R.one))
+
+const matrixIsZero = (x, eps = Number.EPSILON) =>
+  G.all(G.mapWith((x) => O.isZero(x, eps))(x.values()))
+
+const matrixIsClose = (x, y, eps = Number.EPSILON) => matrixIsZero(Matrix.sub(y, x), eps)
+
+const EPS = 1e-14
+
+export const trySolve = (A, b) => {
+  const _A = new Matrix(A)
+  const _b = new Matrix(b)
+  try {
+    const _x = pseudoInverse(_A).mmul(_b)
+    if (matrixIsClose(_A.mmul(_x), _b, EPS)) {
+      return _x.to1DArray()
+    }
+  } catch (e) {
+    /* empty */
+  }
+}
+
+export const lunit = (R) => (C) => {
+  const [I, J, K] = C.shape
+  const _A = A.filledWithShape([I * J, K], (ij, k) => {
+    const i = O.quo(ij, J)
+    const j = O.rem(ij, J)
+    return getItemR(C)(k, j, i)
+  })
+  const _b = A.filledWithShape([I * J, 1], (ij, k) => {
+    const i = O.quo(ij, J)
+    const j = O.rem(ij, J)
+    return i == j ? 1 : 0
+  })
+  const result = trySolve(_A, _b)
+  return result ? fromArray(result) : undefined
+}
+
+export const runit = (R) => (C) => {
+  const [I, J, K] = C.shape
+  const _A = A.filledWithShape([I * J, K], (ij, k) => {
+    const i = O.quo(ij, J)
+    const j = O.rem(ij, J)
+    return getItemR(C)(j, k, i)
+  })
+
+  const _b = A.filledWithShape([I * J, 1], (ij, k) => {
+    const i = O.quo(ij, J)
+    const j = O.rem(ij, J)
+    return i == j ? 1 : 0
+  })
+  const result = trySolve(_A, _b)
+  return result ? fromArray(result) : undefined
+}

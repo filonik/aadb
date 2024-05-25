@@ -10,8 +10,9 @@ import * as AA from '@/core/algebras'
 
 import * as A from '@/core/arrays'
 import * as N from '@/core/ndarrays'
+import * as O from '@/core/numeric/operators'
 
-import { simplify } from '@/core/symbolic/expressions'
+import { simplify, simplifyFractions } from '@/core/symbolic/expressions'
 
 import { SR_Optimized as SR } from '@/core/symbolic/operators'
 import { RR } from '@/core/numeric/operators'
@@ -85,6 +86,16 @@ const aa = computed(() => {
   const powerAssociative = alternative || AA.isPowerAssociative(RR)(C)
   const antiPowerAssociative = antiAlternative || AA.isAntiPowerAssociative(RR)(C)
 
+  const lunit = AA.lunit(RR)(C)
+  const runit = AA.runit(RR)(C)
+
+  const SOC = (x) => SO.C(simplifyFractions(x))
+  const slunit = lunit ? N.mapWith(SOC)(lunit) : undefined
+  const srunit = runit ? N.mapWith(SOC)(runit) : undefined
+
+  const eqlunit = slunit ? SO.eq(_x, simplify(_toExpr(es)(slunit))) : undefined
+  const eqrunit = srunit ? SO.eq(_y, simplify(_toExpr(es)(srunit))) : undefined
+
   const properties = {
     commutative,
     antiCommutative,
@@ -98,6 +109,10 @@ const aa = computed(() => {
     powerAssociative,
     antiPowerAssociative,
     jacobian: AA.isJacobian(RR)(C),
+    lunit,
+    runit,
+    eqlunit,
+    eqrunit,
   }
 
   return { n, id, prevId, nextId, eqXy, eqxY, C, SC, M, X, Y, SX, SY, eqxy, properties }
@@ -120,6 +135,15 @@ const aa = computed(() => {
     <section>
       <h3>Multiplication</h3>
       <ExpressionOutput :value="aa.eqxy" />
+    </section>
+    <section>
+      <h3>Units</h3>
+      <!--
+      <p>Left: {{ aa.properties.lunit }}</p>
+      <p>Right: {{ aa.properties.runit }}</p>
+      -->
+      <p><ExpressionOutput :value="aa.properties.eqlunit" /></p>
+      <p><ExpressionOutput :value="aa.properties.eqrunit" /></p>
     </section>
     <section>
       <h3>Matrix Representation</h3>

@@ -2,22 +2,24 @@ import ndarray from 'ndarray'
 //import ndarrayFill from 'ndarray-fill'
 import ndarrayShow from 'ndarray-show'
 
-import { product, indices } from './arrays'
+import * as A from './arrays'
 
 // Is cwise not working? Something to do with vite bundling?
 // Drop-in replacement for now...
 function ndarrayFill(array, f) {
-  for (let index of indices(array.shape)) {
+  for (let index of A.indices(array.shape)) {
     array.set(...index, f(...index))
   }
 }
 
 export function filledWithShape(shape, f) {
-  const length = product(shape)
+  const length = A.product(shape)
   const result = ndarray(Array.from({ length }), shape)
   ndarrayFill(result, f)
   return result
 }
+
+export const fromArray = (array) => filledWithShape([array.length], A.getItem(array))
 
 export const mapWith = (fn) => (array) =>
   filledWithShape(array.shape, (...index) => fn(array.get(...index)))

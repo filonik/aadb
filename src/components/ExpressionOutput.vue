@@ -8,7 +8,7 @@ import { useMathJax } from '@/composables/useMathJax'
 const props = defineProps({
   value: {
     type: Object,
-    required: true,
+    required: false,
   },
 })
 
@@ -19,7 +19,7 @@ const options = {
 }
 
 const format = (expr) => {
-  return expr.toTex(options)
+  return expr ? `$${expr.toTex(options)}$` : undefined
 }
 
 const rootRef = ref(null)
@@ -30,5 +30,5 @@ watch(() => props.value, render)
 </script>
 
 <template>
-  <span ref="rootRef">${{ format(value) }}$</span>
+  <span ref="rootRef">{{ format(value) }}</span>
 </template>
