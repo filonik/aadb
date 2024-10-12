@@ -1,7 +1,8 @@
 import * as O from './numeric/operators'
 import * as M from './numeric/monoids'
 
-const length = (array) => array.length
+export const length = (array) => array.length
+
 const minimum = (array) => Math.min(...array)
 const maximum = (array) => Math.max(...array)
 

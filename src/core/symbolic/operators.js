@@ -29,7 +29,9 @@ export const SR = {
   zero: C(0),
   one: C(1),
   add,
+  sub,
   mul,
+  div,
 }
 
 export const is_zero = (x) => x.type === 'ConstantNode' && x.value == 0
@@ -51,6 +53,7 @@ export const SR_Optimized = {
     }
     return add(x, y)
   },
+  sub,
   mul: (x, y) => {
     if (is_zero(x) || is_zero(y)) {
       return SR_Optimized.zero
@@ -66,6 +69,7 @@ export const SR_Optimized = {
     }
     return mul(x, y)
   },
+  div,
 }
 
 export { C, S }

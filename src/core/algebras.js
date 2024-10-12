@@ -107,6 +107,38 @@ export const mul =
     return filledWithShape([K], items)
   }
 
+export const mapL = (f) => (C) => (xs, y) => {
+  const [I, J, K] = C.shape
+  const items = (i) => f(getItem(xs)(i), y)
+  return filledWithShape([I], items)
+}
+
+export const mapR = (f) => (C) => (x, ys) => {
+  const [I, J, K] = C.shape
+  const items = (i) => f(x, getItem(ys)(i))
+  return filledWithShape([I], items)
+}
+
+export const mapLR = (f) => (C) => (xs, ys) => {
+  const [I, J, K] = C.shape
+  const items = (i) => f(getItem(xs)(i), getItem(ys)(i))
+  return filledWithShape([I], items)
+}
+
+export const add = ({ add }) => mapLR(add)
+export const sub = ({ sub }) => mapLR(sub)
+
+export const adds = ({ add }) => mapL(add)
+export const subs = ({ sub }) => mapL(sub)
+export const muls = ({ mul }) => mapL(mul)
+export const divs = ({ div }) => mapL(div)
+
+export const table = (f) => (es) => {
+  const N = A.length(es)
+  const items = (i, j) => f(A.getItem(es)(i), A.getItem(es)(j))
+  return filledWithShape([N, N], items)
+}
+
 export const toExpr =
   ({ zero, add, mul }) =>
   (es) =>

@@ -43,7 +43,19 @@ const aa = computed(() => {
   const _mulTable = AA.mulTable(SR)(SC)
   const _matReprL = AA.matReprL(SR)(SC)
   const _matReprR = AA.matReprR(SR)(SC)
+  const _add = AA.add(SR)(SC)
+  const _sub = AA.sub(SR)(SC)
   const _mul = AA.mul(SR)(SC)
+  const _divs = AA.divs(SR)(SC)
+
+  const _antiCommutator = (x, y) => _divs(_add(_mul(x, y), _mul(y, x)), SO.C(2))
+  const _commutator = (x, y) => _divs(_sub(_mul(x, y), _mul(y, x)), SO.C(2))
+
+  const defaultBasis = A.filledWithShape([n], (i) =>
+    N.filledWithShape([n], (j) => (i == j ? SO.C(1) : SO.C(0))),
+  )
+  const _commutatorTable = AA.table(_commutator)(defaultBasis)
+  const commutatorTable = N.mapWith((x) => simplify(_toExpr(es)(x)))(_commutatorTable)
 
   const M = N.mapWith(simplify)(_mulTable(es))
 
@@ -115,15 +127,42 @@ const aa = computed(() => {
     eqrunit,
   }
 
-  return { n, id, prevId, nextId, eqXy, eqxY, C, SC, M, X, Y, SX, SY, eqxy, properties }
+  return {
+    n,
+    id,
+    prevId,
+    nextId,
+    eqXy,
+    eqxY,
+    C,
+    SC,
+    M,
+    X,
+    Y,
+    SX,
+    SY,
+    eqxy,
+    properties,
+    commutatorTable,
+  }
 })
 </script>
 
 <template>
   <main>
     <section style="display: flex; flex-direction: row">
-      <h2 style="flex-grow: 1">
-        Algebra <sub>{{ aa.n }}/{{ aa.id }}</sub>
+      <h2
+        style="
+          flex-grow: 1;
+          display: flex;
+          flex-direction: row;
+          align-items: end;
+          overflow: hidden;
+          gap: 0.25rem;
+        "
+      >
+        Algebra
+        <sub style="overflow: hidden; text-overflow: ellipsis">{{ aa.n }}/{{ aa.id }}</sub>
       </h2>
       <RouterLink :to="`/${aa.n}/${aa.prevId}`">&lt;&lt;</RouterLink>
       <RouterLink :to="`/${aa.n}/${aa.nextId}`">&gt;&gt;</RouterLink>
@@ -171,6 +210,10 @@ const aa = computed(() => {
         Anti-Power-Associative: <BooleanOutput :value="aa.properties.antiPowerAssociative" />
       </p>
       <p>Jacobian: <BooleanOutput :value="aa.properties.jacobian" /></p>
+    </section>
+    <section>
+      <h3>Commutator Table</h3>
+      <MultiplicationTable :value="aa.commutatorTable" />
     </section>
     <section>
       <h3>Structure Constants</h3>
