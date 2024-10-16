@@ -39,6 +39,18 @@ const examplesClifford = [
   { name: 'Cl 1,1,0', path: '/4/44021510534169686206832405320' },
   { name: 'Cl 1,0,1', path: '/4/60303439088322520173111469' },
   { name: 'Cl 0,1,1', path: '/4/118453176091156685244622588' },
+  {
+    name: 'Cl 3,0,0',
+    path: '/8/2947877606741412557737611768797470595162847550714492678280524122967592431137128334461990075685653763049855330781781367608950019735413698870334861001741596784162970103330804804798816644013058201973637483078309086214746000665364954822327502644',
+  },
+  {
+    name: 'Cl 0,3,0',
+    path: '/8/5893061241925320695001928561510216000600387252076781084132029392250139801751454112852957331945690736589165391925254365430022260977287305615116531141999243036454248384621298708495980984896959154917878461448830249735962520801848381834880929456',
+  },
+  {
+    name: 'Cl 0,0,3',
+    path: '/8/12307529841118496228287511460053734694811399751968176398226261328064017367672265720495340459759598437894542692104315429269219980038465582816815990219585323677227728904406543717214225912810108465675528011118780442224492',
+  },
 ]
 
 const examplesCayleyDickson = [
@@ -56,6 +68,18 @@ const examplesNPlex = [
   { name: 'Triplex', path: '/3/861254944615' },
   { name: 'Quadplex', path: '/4/383099085122419850349879494560' },
   { name: 'Quintuplex', path: '/5/48585925499306606622667284864728602017927418555776905833309' },
+  {
+    name: 'Sextuplex',
+    path: '/6/1271004638288839628898359162252678321927615675108541739609137321194965738722292736260869270844118787880',
+  },
+  {
+    name: 'Septuplex',
+    path: '/7/4993603523796848290433826732930043091263707997454466946880759787687548403230368745543695424748499197519713464662692391675343952015935864173061875868356910025899363',
+  },
+  {
+    name: 'Octuplex',
+    path: '/8/2147147956671875690256480466276842090309975225883506760769393932157925964214979522738505424697209363041851600356259404427533630254513035801780415260810693489317387464047844174263395706550245638084048438444923436609858733883783237302416443776640',
+  },
 ]
 
 const examplesOlariu = [
@@ -65,14 +89,9 @@ const examplesOlariu = [
   { name: 'Polar Four-Complex', path: '/4/383099085122419850349879494560' },
 ]
 
-const examplesOther = [
-  { name: 'Trivial', path: '/1/0' },
-  { name: 'Left Units 2', path: '/2/2296' },
-  { name: 'Right Units 2', path: '/2/2440' },
-  { name: 'Left Units 3', path: '/3/2573765069239' },
-  { name: 'Right Units 3', path: '/3/2639540492407' },
-  { name: 'Nil Index 3 (AntiAssociative and Associative)', path: '/2/3' },
-  { name: 'Nil Index 4 (AntiAssociative and not Associative)', path: '/3/177636' },
+const examplesSumProduct = [
+  { name: 'Zero (Counit)', path: '/0/0' },
+  { name: 'One (Unit)', path: '/1/1' },
   { name: 'Real + Real', path: '/2/2188' },
   { name: 'Real + Real + Real', path: '/3/2541867422653' },
   { name: 'Real + Complex', path: '/3/1788851132200' },
@@ -94,6 +113,36 @@ const examplesOther = [
     path: '/8/5893061241925320695001928561507642802390672682211553513937566970147015334938400885324277963279406443208380546574790670534091282732479203064064047428315199296310785645975985029294480201616478839896722678826573059316242312654057808879942436968',
   },
 ]
+
+const examplesOther = [
+  { name: 'Left Units 2', path: '/2/2296' },
+  { name: 'Right Units 2', path: '/2/2440' },
+  { name: 'Left Units 3', path: '/3/2573765069239' },
+  { name: 'Right Units 3', path: '/3/2639540492407' },
+  { name: 'Nil Index 3 (AntiAssociative and Associative)', path: '/2/3' },
+  { name: 'Nil Index 4 (AntiAssociative and not Associative)', path: '/3/177636' },
+]
+
+const examplesGroups = [
+  //{ name: 'C2', path: '/2/1000' },
+  { name: 'C3', path: '/3/861254944615' },
+  { name: 'C4', path: '/4/383099085122419850349879494560' },
+  { name: 'C5', path: '/5/48585925499306606622667284864728602017927418555776905833309' },
+  //{ name: 'A2', path: '/2/1000' },
+  { name: 'A3', path: '/3/861254944615' },
+  //{ name: 'A4', path: '/3/861254944615' },
+  //{ name: 'S2', path: '/2/1000' },
+  {
+    name: 'S3',
+    path: '6/15749051339995633579839963910708154871310766190700982399255272042821055376567309317436488737194665000',
+  },
+  //{ name: 'D1', path: '/2/1000' },
+  { name: 'D2', path: '/4/44021507575804218608360851360' },
+  {
+    name: 'D3',
+    path: '/6/15749051339995633576113552703363305038183695753045598427776904617087034689458707792593557302598441000',
+  },
+]
 </script>
 
 <template>
@@ -101,61 +150,79 @@ const examplesOther = [
     <section>
       <h2>Examples</h2>
     </section>
-    <section>
-      <h3>Common</h3>
-      <ul>
-        <li v-for="example in examples" :key="example.path">
-          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h3>Cayley Dickson Construction</h3>
-      <ul>
-        <li v-for="example in examplesCayleyDickson" :key="example.path">
-          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h3>Clifford Algebras</h3>
-      <ul>
-        <li v-for="example in examplesClifford" :key="example.path">
-          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h3>Quaternions</h3>
-      <ul>
-        <li v-for="example in examplesQuaternion" :key="example.path">
-          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h3>n-Plex Numbers</h3>
-      <ul>
-        <li v-for="example in examplesNPlex" :key="example.path">
-          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h3>Olariu</h3>
-      <ul>
-        <li v-for="example in examplesOlariu" :key="example.path">
-          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h3>Other</h3>
-      <ul>
-        <li v-for="example in examplesOther" :key="example.path">
-          <RouterLink :to="example.path">{{ example.name }}</RouterLink>
-        </li>
-      </ul>
-    </section>
+    <div class="grid grid-cols-3">
+      <section>
+        <h3>Common</h3>
+        <ul>
+          <li v-for="example in examples" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Cayley Dickson Construction</h3>
+        <ul>
+          <li v-for="example in examplesCayleyDickson" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Clifford Algebras</h3>
+        <ul>
+          <li v-for="example in examplesClifford" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Groups</h3>
+        <ul>
+          <li v-for="example in examplesGroups" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Quaternions</h3>
+        <ul>
+          <li v-for="example in examplesQuaternion" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>n-Plex Numbers</h3>
+        <ul>
+          <li v-for="example in examplesNPlex" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Olariu</h3>
+        <ul>
+          <li v-for="example in examplesOlariu" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Sums and Products</h3>
+        <ul>
+          <li v-for="example in examplesSumProduct" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Other</h3>
+        <ul>
+          <li v-for="example in examplesOther" :key="example.path">
+            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+          </li>
+        </ul>
+      </section>
+    </div>
   </main>
 </template>
