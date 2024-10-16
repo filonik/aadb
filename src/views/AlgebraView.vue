@@ -132,6 +132,7 @@ const aa = computed(() => {
     id,
     prevId,
     nextId,
+    es,
     eqXy,
     eqxY,
     C,
@@ -169,7 +170,7 @@ const aa = computed(() => {
     </section>
     <section>
       <h3>Multiplication Table</h3>
-      <MultiplicationTable :value="aa.M" />
+      <MultiplicationTable :value="aa.M" :headers="aa.es" :title="'\\mathbf{x}\\mathbf{y}'" />
     </section>
     <section>
       <h3>Multiplication</h3>
@@ -213,7 +214,11 @@ const aa = computed(() => {
     </section>
     <section>
       <h3>Commutator Table</h3>
-      <MultiplicationTable :value="aa.commutatorTable" />
+      <MultiplicationTable
+        :value="aa.commutatorTable"
+        :headers="aa.es"
+        :title="'\\left[\\mathbf{x},\\mathbf{y}\\right]'"
+      />
     </section>
     <section>
       <h3>Structure Constants</h3>

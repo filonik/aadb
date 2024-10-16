@@ -11,6 +11,14 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  headers: {
+    type: Object,
+    required: false,
+  },
+  title: {
+    type: String,
+    required: false,
+  },
 })
 
 const rows = computed(() => range(0, props.value.shape[0]))
@@ -30,12 +38,17 @@ const rootRef = ref(null)
 
 const { render } = useMathJax(rootRef)
 
-watch(() => props.value, render)
+watch(props, render)
 </script>
 
 <template>
   <table ref="rootRef">
+    <tr v-if="props.headers">
+      <th>${{ title }}$</th>
+      <th v-for="j in cols" :key="`col-${j}`">${{ format(props.headers.get(j)) }}$</th>
+    </tr>
     <tr v-for="i in rows" :key="`row-${i}`">
+      <th v-if="props.headers">${{ format(props.headers.get(i)) }}$</th>
       <td v-for="j in cols" :key="`item-${i}-${j}`">${{ format(value.get(i, j)) }}$</td>
     </tr>
   </table>
@@ -44,6 +57,13 @@ watch(() => props.value, render)
 <style scoped>
 table {
   border-collapse: collapse;
+}
+
+th {
+  min-width: 4em;
+  min-height: 4em;
+  text-align: center;
+  background-color: var(--color-border);
 }
 
 td {
