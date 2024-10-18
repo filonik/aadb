@@ -7,6 +7,10 @@
   font-weight: normal;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 a,
 .green {
   text-decoration: none;
@@ -27,4 +31,24 @@ a,
 
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+h4 {
+  font-size: 1rem;
+}
+
+summary {
+  font-size: 1.25rem;
 }

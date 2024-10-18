@@ -3,6 +3,7 @@ import ndarray from 'ndarray'
 import * as A from './arrays'
 import * as G from './generators'
 import * as O from './numeric/operators'
+import * as S from './strings'
 
 import { fromArray, filledWithShape, getItem, getItemR } from './ndarrays'
 
@@ -54,6 +55,30 @@ export const toConstants = (n, id) => {
   const digits = toBase(BigInt(3))(BigInt(id))
   const values = digits.map((digit) => toSign(Number(digit)))
   return ndarray(pad(0, Math.pow(n, 3))(values), shape)
+}
+
+export const sparsifyConstants = (C) => {
+  const coeffs = [...new Set(C.data)].sort()
+  const entries = Array.from(coeffs, (coeff) => [coeff, []])
+  for (let index of A.indices(C.shape)) {
+    const c = C.get(...index)
+    const i = coeffs.indexOf(c)
+    entries[i][1].push(index)
+  }
+  const result = Object.fromEntries(entries)
+  delete result[0]
+  return result
+}
+
+export const sparseConstantsToString = (C) => {
+  let result = ''
+  for (let [c, indices] of Object.entries(C)) {
+    result += c
+    result += ','
+    result += indices
+    result += '\n'
+  }
+  return S.base64UrlEncode(result)
 }
 
 export const mulTable =

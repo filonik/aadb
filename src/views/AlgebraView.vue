@@ -1,8 +1,9 @@
 <script setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
 import BooleanOutput from '@/components/BooleanOutput.vue'
+import DetailsOutput from '@/components/DetailsOutput.vue'
 import ExpressionOutput from '@/components/ExpressionOutput.vue'
 import MultiplicationTable from '@/components/MultiplicationTable.vue'
 
@@ -24,12 +25,9 @@ const route = useRoute()
 
 const toArrExpr = (array) => SA.filledWithShape(array.shape, N.getItemR(array))
 
-const aa = computed(() => {
+const base = computed(() => {
   const n = parseInt(route.params.n)
   const id = BigInt(route.params.id)
-
-  const prevId = (id - 1n).toString()
-  const nextId = (id + 1n).toString()
 
   const es = N.symvec('e', n)
   const xs = N.symvec('x', n)
@@ -39,52 +37,40 @@ const aa = computed(() => {
 
   const SC = N.mapWith(SO.C)(C)
 
-  const _toExpr = AA.toExpr(SR)
-  const _mulTable = AA.mulTable(SR)(SC)
-  const _matReprL = AA.matReprL(SR)(SC)
-  const _matReprR = AA.matReprR(SR)(SC)
-  const _add = AA.add(SR)(SC)
-  const _sub = AA.sub(SR)(SC)
-  const _mul = AA.mul(SR)(SC)
-  const _divs = AA.divs(SR)(SC)
+  const SA = {
+    C: SC,
+    adds: AA.adds(SR)(SC),
+    subs: AA.subs(SR)(SC),
+    muls: AA.muls(SR)(SC),
+    divs: AA.divs(SR)(SC),
+    add: AA.add(SR)(SC),
+    sub: AA.sub(SR)(SC),
+    mul: AA.mul(SR)(SC),
+  }
 
-  const _antiCommutator = (x, y) => _divs(_add(_mul(x, y), _mul(y, x)), SO.C(2))
-  const _commutator = (x, y) => _divs(_sub(_mul(x, y), _mul(y, x)), SO.C(2))
+  const toExpr = AA.toExpr(SR)
 
-  const defaultBasis = A.filledWithShape([n], (i) =>
-    N.filledWithShape([n], (j) => (i == j ? SO.C(1) : SO.C(0))),
-  )
-  const _commutatorTable = AA.table(_commutator)(defaultBasis)
-  const commutatorTable = N.mapWith((x) => simplify(_toExpr(es)(x)))(_commutatorTable)
+  return {
+    n,
+    id,
+    es,
+    xs,
+    ys,
+    C,
+    SA,
+    toExpr,
+  }
+})
+
+const aa = computed(() => {
+  const { n, id, es, C, SA, toExpr } = base.value
+
+  const prevId = (id - 1n).toString()
+  const nextId = (id + 1n).toString()
+
+  const _mulTable = AA.mulTable(SR)(SA.C)
 
   const M = N.mapWith(simplify)(_mulTable(es))
-
-  const X = N.mapWith(simplify)(_matReprL(xs))
-  const Y = N.mapWith(simplify)(_matReprR(ys))
-
-  const xy = N.mapWith(simplify)(_mul(xs, ys))
-
-  const sx = toArrExpr(xs)
-  const sy = toArrExpr(ys)
-
-  const SX = toArrExpr(X)
-  const SY = toArrExpr(Y)
-
-  const sxy = toArrExpr(xy)
-
-  //const X = math.parse('matrix([[1,2],[3,4]])')
-  //const X = SA.A([SA.A([SO.C(1), SO.C(2)]), SA.A([SO.C(3), SO.C(4)])])
-
-  //N.mapWith(simplify)(_matReprL(xs))
-
-  const eqXy = SO.eq(SO.mul(SX, sy), sxy)
-  const eqxY = SO.eq(SO.mul(sx, SY), sxy)
-
-  const _x = SO.S('\\mathbf{x}')
-  const _y = SO.S('\\mathbf{y}')
-  const _xy = SO.mul(_x, _y)
-
-  const eqxy = SO.eq(_xy, simplify(_toExpr(es)(xy)))
 
   const commutative = AA.isCommutative(RR)(C)
   const antiCommutative = AA.isAntiCommutative(RR)(C)
@@ -97,16 +83,6 @@ const aa = computed(() => {
 
   const powerAssociative = alternative || AA.isPowerAssociative(RR)(C)
   const antiPowerAssociative = antiAlternative || AA.isAntiPowerAssociative(RR)(C)
-
-  const lunit = AA.lunit(RR)(C)
-  const runit = AA.runit(RR)(C)
-
-  const SOC = (x) => SO.C(simplifyFractions(x))
-  const slunit = lunit ? N.mapWith(SOC)(lunit) : undefined
-  const srunit = runit ? N.mapWith(SOC)(runit) : undefined
-
-  const eqlunit = slunit ? SO.eq(_x, simplify(_toExpr(es)(slunit))) : undefined
-  const eqrunit = srunit ? SO.eq(_y, simplify(_toExpr(es)(srunit))) : undefined
 
   const properties = {
     commutative,
@@ -121,10 +97,6 @@ const aa = computed(() => {
     powerAssociative,
     antiPowerAssociative,
     jacobian: AA.isJacobian(RR)(C),
-    lunit,
-    runit,
-    eqlunit,
-    eqrunit,
   }
 
   return {
@@ -133,19 +105,109 @@ const aa = computed(() => {
     prevId,
     nextId,
     es,
+    C,
+    M,
+    properties,
+  }
+})
+
+const aaEqs = computed(() => {
+  const { es, xs, ys, C, SA, toExpr } = base.value
+
+  const _x = SO.S('\\mathbf{x}')
+  const _y = SO.S('\\mathbf{y}')
+  const _xy = SO.mul(_x, _y)
+
+  const xy = N.mapWith(simplify)(SA.mul(xs, ys))
+
+  const eqxy = SO.eq(_xy, simplify(toExpr(es)(xy)))
+
+  const lunit = AA.lunit(RR)(C)
+  const runit = AA.runit(RR)(C)
+
+  const SOC = (x) => SO.C(simplifyFractions(x))
+  const slunit = lunit ? N.mapWith(SOC)(lunit) : undefined
+  const srunit = runit ? N.mapWith(SOC)(runit) : undefined
+
+  const eqlunit = slunit ? SO.eq(_x, simplify(toExpr(es)(slunit))) : undefined
+  const eqrunit = srunit ? SO.eq(_y, simplify(toExpr(es)(srunit))) : undefined
+
+  return {
+    xy,
+    eqxy,
+    lunit,
+    runit,
+    eqlunit,
+    eqrunit,
+  }
+})
+
+const aaMatReprs = computed(() => {
+  const { xs, ys, SA } = base.value
+  const { xy } = aaEqs.value
+
+  const _matReprL = AA.matReprL(SR)(SA.C)
+  const _matReprR = AA.matReprR(SR)(SA.C)
+
+  const X = N.mapWith(simplify)(_matReprL(xs))
+  const Y = N.mapWith(simplify)(_matReprR(ys))
+
+  const sx = toArrExpr(xs)
+  const sy = toArrExpr(ys)
+
+  const SX = toArrExpr(X)
+  const SY = toArrExpr(Y)
+
+  const sxy = toArrExpr(xy)
+
+  const T = (x) => SR.pow(x, SO.S('T'))
+
+  const eqXy = SO.eq(SO.mul(SX, sy), sxy)
+  const eqxY = SO.eq(SO.mul(T(sx), SY), T(sxy))
+
+  return {
     eqXy,
     eqxY,
-    C,
-    SC,
-    M,
-    X,
-    Y,
-    SX,
-    SY,
-    eqxy,
-    properties,
-    commutatorTable,
   }
+})
+
+const commutator =
+  ({ divs, sub, mul }) =>
+  (x, y) =>
+    divs(sub(mul(x, y), mul(y, x)), SO.C(2))
+
+const antiCommutator =
+  ({ divs, add, mul }) =>
+  (x, y) =>
+    divs(add(mul(x, y), mul(y, x)), SO.C(2))
+
+const aaCommutatorTable = computed(() => {
+  const { n, es, SA } = base.value
+
+  const _toExpr = AA.toExpr(SR)
+
+  const defaultBasis = A.filledWithShape([n], (i) =>
+    N.filledWithShape([n], (j) => (i == j ? SO.C(1) : SO.C(0))),
+  )
+
+  const _commutatorTable = AA.table(commutator(SA))(defaultBasis)
+  const commutatorTable = N.mapWith((x) => simplify(_toExpr(es)(x)))(_commutatorTable)
+
+  return commutatorTable
+})
+
+const aaAntiCommutatorTable = computed(() => {
+  const { n, es, SA } = base.value
+
+  const _toExpr = AA.toExpr(SR)
+
+  const defaultBasis = A.filledWithShape([n], (i) =>
+    N.filledWithShape([n], (j) => (i == j ? SO.C(1) : SO.C(0))),
+  )
+  const _commutatorTable = AA.table(antiCommutator(SA))(defaultBasis)
+  const commutatorTable = N.mapWith((x) => simplify(_toExpr(es)(x)))(_commutatorTable)
+
+  return commutatorTable
 })
 </script>
 
@@ -173,26 +235,6 @@ const aa = computed(() => {
       <MultiplicationTable :value="aa.M" :headers="aa.es" :title="'\\mathbf{x}\\mathbf{y}'" />
     </section>
     <section>
-      <h3>Multiplication</h3>
-      <ExpressionOutput :value="aa.eqxy" />
-    </section>
-    <section>
-      <h3>Units</h3>
-      <!--
-      <p>Left: {{ aa.properties.lunit }}</p>
-      <p>Right: {{ aa.properties.runit }}</p>
-      -->
-      <p><ExpressionOutput :value="aa.properties.eqlunit" /></p>
-      <p><ExpressionOutput :value="aa.properties.eqrunit" /></p>
-    </section>
-    <section>
-      <h3>Matrix Representation</h3>
-      <ExpressionOutput :value="aa.eqXy" />
-      <!--
-      <ExpressionOutput :value="aa.eqxY" />
-      -->
-    </section>
-    <section>
       <h3>Properties</h3>
       <p>
         Commutative: <BooleanOutput :value="aa.properties.commutative" /> / Anti-Commutative:
@@ -213,16 +255,55 @@ const aa = computed(() => {
       <p>Jacobian: <BooleanOutput :value="aa.properties.jacobian" /></p>
     </section>
     <section>
-      <h3>Commutator Table</h3>
-      <MultiplicationTable
-        :value="aa.commutatorTable"
-        :headers="aa.es"
-        :title="'\\left[\\mathbf{x},\\mathbf{y}\\right]'"
-      />
+      <DetailsOutput>
+        <template v-slot:summary>Equations</template>
+        <h4>Multiplication</h4>
+        <ExpressionOutput :value="aaEqs.eqxy" />
+        <h4>Units</h4>
+        <!--
+        <p>Left: {{ aa.properties.lunit }}</p>
+        <p>Right: {{ aa.properties.runit }}</p>
+        -->
+        <p><ExpressionOutput :value="aaEqs.eqlunit" /></p>
+        <p><ExpressionOutput :value="aaEqs.eqrunit" /></p>
+      </DetailsOutput>
     </section>
     <section>
-      <h3>Structure Constants</h3>
-      {{ aa.C.data }}
+      <DetailsOutput>
+        <template v-slot:summary>Matrix Representations</template>
+        <p style="margin: 1em 0">
+          <ExpressionOutput :value="aaMatReprs.eqXy" />
+        </p>
+        <p style="margin: 1em 0">
+          <ExpressionOutput :value="aaMatReprs.eqxY" />
+        </p>
+      </DetailsOutput>
+    </section>
+    <section>
+      <DetailsOutput>
+        <template v-slot:summary>Commutator Table</template>
+        <MultiplicationTable
+          :value="aaCommutatorTable"
+          :headers="aa.es"
+          :title="'\\left[\\mathbf{x},\\mathbf{y}\\right]'"
+        />
+      </DetailsOutput>
+    </section>
+    <section>
+      <DetailsOutput>
+        <template v-slot:summary>Anti-Commutator Table</template>
+        <MultiplicationTable
+          :value="aaAntiCommutatorTable"
+          :headers="aa.es"
+          :title="'\\left\\{\\mathbf{x},\\mathbf{y}\\right\\}'"
+        />
+      </DetailsOutput>
+    </section>
+    <section>
+      <DetailsOutput>
+        <template v-slot:summary>Structure Constants</template>
+        {{ aa.C.data }}
+      </DetailsOutput>
     </section>
   </main>
 </template>
