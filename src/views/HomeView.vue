@@ -101,13 +101,22 @@ const examplesOlariu = [
 ]
 
 const examplesSumProduct = [
-  { name: 'Zero (Counit)', path: '/0/0' },
-  { name: 'One (Unit)', path: '/1/1' },
-  { name: 'Real + Real', path: '/2/2188' },
-  { name: 'Real + Real + Real', path: '/3/2541867422653' },
-  { name: 'Real + Complex', path: '/3/1788851132200' },
-  { name: 'Complex + Complex', path: '/4/777171261743863745858182964890' },
+  { name: '0 (Counit)', path: '/0/0' },
+  { name: '1 (Unit)', path: '/1/1' },
+  { name: '2 (1 + 1)', path: '/2/2188' },
+  { name: '3 (1 + 1 + 1)', path: '/3/2541867422653' },
+  { name: '1 + Complex', path: '/3/1788851132200' },
+  { name: '1 + Dual', path: '/3/94273913314' },
+  { name: '1 + Split-Complex', path: '/3/941562522757' },
+  { name: '2 * Complex', path: '/4/777171261743863745858182964890' },
+  { name: '2 * Dual', path: '/4/14130412789972082593909598470' },
+  { name: '2 * Split-Complex', path: '/4/395650837266917914226046281680' },
+  //{ name: 'Complex ^ 2', path: '/4/45649703178359918184201282586'},
+  //{ name: 'Dual ^ 2', path: '/4/'},
+  //{ name: 'SplitComplex ^ 2', path: '/4/44021507575804218608360851360'},
   { name: 'BiComplex (Complex * Complex)', path: '/4/45649703178359918184201282586' },
+  { name: 'BiDual (Complex * Dual)', path: '/4/3142245429137222761288310947' },
+  { name: 'BiSplitComplex (Complex * SplitComplex)', path: '/4/87982711716572875744186446568' },
   { name: 'Dual Complex (Dual * Complex)', path: '/4/118453172038807426844525371' },
   { name: 'Split-BiComplex (SplitComplex * Complex)', path: '/4/86470815588023668076964553780' },
   {
@@ -134,7 +143,7 @@ const examplesOther = [
 ]
 
 const examplesGroups = [
-  //{ name: 'C2', path: '/2/1000' },
+  { name: 'C2', path: '/2/1000' },
   { name: 'C3', path: '/3/861254944615' },
   { name: 'C4', path: '/4/383099085122419850349879494560' },
   { name: 'C5', path: '/5/48585925499306606622667284864728602017927418555776905833309' },

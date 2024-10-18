@@ -163,7 +163,7 @@ const aaMatReprs = computed(() => {
   const T = (x) => SR.pow(x, SO.S('T'))
 
   const eqXy = SO.eq(SO.mul(SX, sy), sxy)
-  const eqxY = SO.eq(SO.mul(T(sx), SY), T(sxy))
+  const eqxY = SO.eq(SO.mul(T(sx), T(SY)), T(sxy))
 
   return {
     eqXy,

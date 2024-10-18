@@ -109,8 +109,8 @@ export const matReprR =
     const [I, J, K] = C.shape
     //const items = (j, k) => sum({ items: range(0, head).map((i) => mul(getItemR(C)(i, j, k), getItem(xs)(i))) })
     const sum = A.reduce({ append: add, empty: zero })
-    const items = (i, k) => sum(A.range(0, J).map((j) => mul(getItemR(C)(i, j, k), getItem(xs)(j))))
-    return filledWithShape([I, K], items)
+    const items = (k, i) => sum(A.range(0, J).map((j) => mul(getItemR(C)(i, j, k), getItem(xs)(j))))
+    return filledWithShape([K, I], items)
   }
 
 export const mul =
