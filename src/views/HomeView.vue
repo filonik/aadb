@@ -7,6 +7,7 @@ const examplesCommon = [
   { name: 'Dual', path: '/2/271' },
   { name: 'Split-Complex', path: '/2/1000' },
   { name: 'Quaternion', path: '/4/87982708766312930240990603242' },
+  //{ name: 'Cross Product 1', path: '/1/3' },
   { name: 'Cross Product 3', path: '/3/22097675691' },
   {
     name: 'Cross Product 7',
@@ -194,7 +195,7 @@ const groups = [
     <section>
       <h2>Examples</h2>
     </section>
-    <div class="grid grid-cols-3">
+    <div class="grid grid-cols-none lg:grid-cols-3">
       <section v-for="(group, i) of groups" :key="i">
         <h3>{{ group.name }}</h3>
         <ul>
