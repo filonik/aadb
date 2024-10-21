@@ -1,9 +1,13 @@
 import ndarray from 'ndarray'
 
+//import * as bigintConversion from 'bigint-conversion'
+
 import * as A from './arrays'
 import * as G from './generators'
 import * as O from './numeric/operators'
 import * as S from './strings'
+
+import { bigint_to_unsignedbase64, unsignedbase64_to_bigint } from './numbers'
 
 import { fromArray, filledWithShape, getItem, getItemR } from './ndarrays'
 
@@ -55,6 +59,11 @@ export const toConstants = (n, id) => {
   const digits = toBase(BigInt(3))(BigInt(id))
   const values = digits.map((digit) => toSign(Number(digit)))
   return ndarray(pad(0, Math.pow(n, 3))(values), shape)
+}
+
+export const toBase64 = (id) => {
+  return bigint_to_unsignedbase64(id)
+  //return bigintConversion.bigintToBase64(id, true, false)
 }
 
 export const sparsifyConstants = (C) => {

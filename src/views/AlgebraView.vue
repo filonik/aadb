@@ -257,52 +257,62 @@ const aaAntiCommutatorTable = computed(() => {
     <section>
       <DetailsOutput>
         <template v-slot:summary>Equations</template>
-        <h4>Multiplication</h4>
-        <ExpressionOutput :value="aaEqs.eqxy" />
-        <h4>Units</h4>
-        <!--
-        <p>Left: {{ aa.properties.lunit }}</p>
-        <p>Right: {{ aa.properties.runit }}</p>
-        -->
-        <p><ExpressionOutput :value="aaEqs.eqlunit" /></p>
-        <p><ExpressionOutput :value="aaEqs.eqrunit" /></p>
+        <section>
+          <h4>Multiplication</h4>
+          <ExpressionOutput :value="aaEqs.eqxy" />
+        </section>
+        <section>
+          <h4>Units</h4>
+          <!--
+          <p>Left: {{ aa.properties.lunit }}</p>
+          <p>Right: {{ aa.properties.runit }}</p>
+          -->
+          <p><ExpressionOutput :value="aaEqs.eqlunit" /></p>
+          <p><ExpressionOutput :value="aaEqs.eqrunit" /></p>
+        </section>
       </DetailsOutput>
     </section>
     <section>
       <DetailsOutput>
         <template v-slot:summary>Matrix Representations</template>
-        <p style="margin: 1em 0">
-          <ExpressionOutput :value="aaMatReprs.eqXy" />
-        </p>
-        <p style="margin: 1em 0">
-          <ExpressionOutput :value="aaMatReprs.eqxY" />
-        </p>
+        <section>
+          <h4>Left Representation</h4>
+          <p><ExpressionOutput :value="aaMatReprs.eqXy" /></p>
+        </section>
+        <section>
+          <h4>Right Representation</h4>
+          <p><ExpressionOutput :value="aaMatReprs.eqxY" /></p>
+        </section>
       </DetailsOutput>
     </section>
     <section>
       <DetailsOutput>
-        <template v-slot:summary>Commutator Table</template>
-        <MultiplicationTable
-          :value="aaCommutatorTable"
-          :headers="aa.es"
-          :title="'\\left[\\mathbf{x},\\mathbf{y}\\right]'"
-        />
-      </DetailsOutput>
-    </section>
-    <section>
-      <DetailsOutput>
-        <template v-slot:summary>Anti-Commutator Table</template>
-        <MultiplicationTable
-          :value="aaAntiCommutatorTable"
-          :headers="aa.es"
-          :title="'\\left\\{\\mathbf{x},\\mathbf{y}\\right\\}'"
-        />
+        <template v-slot:summary>Tables</template>
+        <section>
+          <h4>Commutator Table</h4>
+          <MultiplicationTable
+            :value="aaCommutatorTable"
+            :headers="aa.es"
+            :title="'\\left[\\mathbf{x},\\mathbf{y}\\right]'"
+          />
+        </section>
+        <section>
+          <h4>Anti-Commutator Table</h4>
+          <MultiplicationTable
+            :value="aaAntiCommutatorTable"
+            :headers="aa.es"
+            :title="'\\left\\{\\mathbf{x},\\mathbf{y}\\right\\}'"
+          />
+        </section>
       </DetailsOutput>
     </section>
     <section>
       <DetailsOutput>
         <template v-slot:summary>Structure Constants</template>
-        {{ aa.C.data }}
+        <p>{{ aa.C.data }}</p>
+        <!--
+        <p>{{ AA.toBase64(BigInt(aa.id)) }}</p>
+        -->
       </DetailsOutput>
     </section>
   </main>
