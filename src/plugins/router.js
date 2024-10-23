@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 import HomeView from '@/views/HomeView.vue'
 import AlgebraView from '@/views/AlgebraView.vue'
+import AlgebraHomorphismsView from '@/views/AlgebraHomorphismsView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -9,12 +10,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
     },
     {
       path: '/:n/:id',
       name: 'algebra',
-      component: AlgebraView
+      component: AlgebraView,
       /*
       props: (route) => ({
         ...route.params,
@@ -22,8 +23,13 @@ const router = createRouter({
         id: BigInt(route.params.id)
       })
       */
-    }
-  ]
+    },
+    {
+      path: '/:n/:id/similar',
+      name: 'algebra-homomorphisms',
+      component: AlgebraHomorphismsView,
+    },
+  ],
 })
 
 export default router

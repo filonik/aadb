@@ -67,3 +67,32 @@ export const CartesianMul = {
 export const cartesianProduct = reduce(CartesianMul)
 
 export const indices = (shape) => cartesianProduct(shape.map((upper) => range(0, upper)))
+
+export const distinct = (xs) => [...new Set(xs)]
+
+const omit = (xs, i) => [...xs.slice(0, i), ...xs.slice(i + 1)]
+
+export const permute = (xs) =>
+  xs && xs.length ? xs.flatMap((d, i) => permute(omit(xs, i)).map((v) => [d, ...v])) : [[]]
+
+export const reflection = (rs) => {
+  const n = rs.length
+  return filledWithShape([n, n], (i, j) => (i == j ? (rs[i] ? -1 : +1) : 0))
+}
+
+export const reflections = (n) => {
+  const mask = (i) => range(0, n).map((j) => Boolean(i & (1 << j)))
+  return range(0, 1 << n).map((i) => reflection(mask(i)))
+}
+
+export const permutation = (ps) => {
+  const n = ps.length
+  return filledWithShape([n, n], (i, j) => (i == ps[j] ? 1 : 0))
+}
+
+export const permutations = (n) => {
+  return permute(range(0, n)).map(permutation)
+}
+
+export const table = (f) => (xs, ys) =>
+  range(0, xs.length).map((i) => range(0, ys.length).map((j) => f(xs[i], ys[j])))

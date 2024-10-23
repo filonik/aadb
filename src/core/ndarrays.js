@@ -1,4 +1,5 @@
 import ndarray from 'ndarray'
+import ndarrayGemm from 'ndarray-gemm'
 //import ndarrayFill from 'ndarray-fill'
 import ndarrayShow from 'ndarray-show'
 
@@ -20,6 +21,12 @@ export function filledWithShape(shape, f) {
 }
 
 export const fromArray = (array) => filledWithShape([array.length], A.getItem(array))
+
+export const fromMatrix = (m) => {
+  const shape = [m.rows, m.columns]
+  const data = m.data.map((xs) => Array.from(xs)).flat(1)
+  return ndarray(data, shape)
+}
 
 export const mapWith = (fn) => (array) =>
   filledWithShape(array.shape, (...index) => fn(array.get(...index)))
@@ -51,3 +58,31 @@ const items =
 export const symarr = (name, shape) => filledWithShape(shape, items(name))
 export const symvec = (name, length) => symarr(name, [length])
 export const symmat = (name, length) => symarr(name, [length, length])
+
+export const unit = (n, k) => filledWithShape([n], (i) => (i == k ? 1 : 0))
+export const eye = (n, m) => filledWithShape([n, m], (i, j) => (i == j ? 1 : 0))
+
+export const reflection = (rs) => {
+  const n = rs.length
+  return filledWithShape([n, n], (i, j) => (i == j ? (rs[i] ? -1 : +1) : 0))
+}
+
+export const reflections = (n) => {
+  const mask = (i) => A.range(0, n).map((j) => Boolean(i & (1 << j)))
+  return A.range(0, 1 << n).map((i) => reflection(mask(i)))
+}
+
+export const permutation = (ps) => {
+  const n = ps.length
+  return filledWithShape([n, n], (i, j) => (i == ps[j] ? 1 : 0))
+}
+
+export const permutations = (n) => {
+  return A.permutations(A.range(0, n)).map(permutation)
+}
+
+export const matmul = (a, b) => {
+  const result = filledWithShape([a.shape[0], b.shape[1]], () => 0)
+  ndarrayGemm(result, a, b)
+  return result
+}

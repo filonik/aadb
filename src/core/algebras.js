@@ -7,11 +7,11 @@ import * as G from './generators'
 import * as O from './numeric/operators'
 import * as S from './strings'
 
-import { bigint_to_unsignedbase64, unsignedbase64_to_bigint } from './numbers'
+import { unsignedBigIntToBase64, base64ToUnsignedBigInt } from './numbers'
 
-import { fromArray, filledWithShape, getItem, getItemR } from './ndarrays'
+import { fromArray, fromMatrix, filledWithShape, getItem, getItemR } from './ndarrays'
 
-import { Matrix, pseudoInverse } from 'ml-matrix'
+import { Matrix, inverse, pseudoInverse } from 'ml-matrix'
 
 const groupBySorted = (x) => JSON.stringify(x.toSorted())
 
@@ -33,8 +33,8 @@ const toBase = (base) => (value) => {
 }
 
 const fromBase = (base) => (digits) => {
-  let result = 0
-  let n = 1
+  let result = BigInt(0)
+  let n = BigInt(1)
   for (let digit of digits) {
     result += digit * n
     n *= base
@@ -61,8 +61,15 @@ export const toConstants = (n, id) => {
   return ndarray(pad(0, Math.pow(n, 3))(values), shape)
 }
 
+export const fromConstants = (C) => {
+  const [I, J, K] = C.shape
+  const digits = C.data.flat(1)
+  const id = fromBase(BigInt(3))(digits.map((digit) => BigInt(fromSign(digit))))
+  return [I, id]
+}
+
 export const toBase64 = (id) => {
-  return bigint_to_unsignedbase64(id)
+  return unsignedBigIntToBase64(id)
   //return bigintConversion.bigintToBase64(id, true, false)
 }
 
@@ -140,6 +147,61 @@ export const mul =
       )
     return filledWithShape([K], items)
   }
+
+/*
+  def tconstants(C, P, P_inv):
+    I, J, K = C.shape
+    def _tconstants(i, j, k):
+        return sum(sum(sum(P[k,c]*C[a,b,c]*P_inv[a,i]*P_inv[b,j] for c in range(K)) for b in range(J)) for a in range(I))
+    return np.array([[[_tconstants(i,j,k) for k in range(K)] for j in range(J)] for i in range(I)], dtype=C.dtype)
+
+*/
+export const sw =
+  ({ zero, add, mul }) =>
+  (C, P, Pinv) => {
+    const [I, J, K] = C.shape
+    const sum = A.reduce({ append: add, empty: zero })
+    const items = (i, j, k) =>
+      sum(
+        A.range(0, I).map((a) =>
+          sum(
+            A.range(0, J).map((b) =>
+              sum(
+                A.range(0, K).map((c) =>
+                  mul(
+                    mul(mul(getItemR(P)(k, c), getItemR(C)(a, b, c)), getItemR(Pinv)(a, i)),
+                    getItemR(Pinv)(b, j),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      )
+    return filledWithShape([I, J, K], items)
+  }
+
+export const similarConstants = (R) => (C) => {
+  const [I, J, K] = C.shape
+
+  const ps = A.permutations(I).map((p) => new Matrix(p))
+  const rs = A.reflections(I).map((r) => new Matrix(r))
+
+  return A.table((r, p) => {
+    const rp = r.mmul(p)
+    const rpinv = inverse(rp)
+    return sw(R)(C, fromMatrix(rp), fromMatrix(rpinv))
+  })(rs, ps)
+}
+
+export const similarIds = (R) => (cid) => {
+  const [n, id] = cid
+  const C = toConstants(n, id)
+  const Ds = similarConstants(R)(C)
+  return A.distinct(Ds.flat(1).map((D) => fromConstants(D)[1]))
+    .sort()
+    .map((id) => [n, id])
+}
 
 export const mapL = (f) => (C) => (xs, y) => {
   const [I, J, K] = C.shape

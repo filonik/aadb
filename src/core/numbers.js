@@ -1,27 +1,26 @@
-const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-'
+//const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
 
-export function bigint_to_unsignedbase64(num) {
+export function unsignedBigIntToBase64(num) {
   const base = BigInt(ALPHABET.length)
-  let str = '',
-    r
+  let result = ''
   while (num) {
-    r = num % base
+    let r = num % base
     num -= r
     num /= base
-    str = ALPHABET.charAt(Number(r)) + str
+    result = ALPHABET.charAt(Number(r)) + result
   }
-  return str
+  return result
 }
 
-export function unsignedbase64_to_bigint(str) {
+export function base64ToUnsignedBigInt(str) {
   const base = BigInt(ALPHABET.length)
-  let num = BigInt(0),
-    r
+  let result = BigInt(0)
   while (str.length) {
-    r = ALPHABET.indexOf(str.charAt(0))
+    let r = ALPHABET.indexOf(str.charAt(0))
     str = str.substr(1)
-    num *= base
-    num += BigInt(r)
+    result *= base
+    result += BigInt(r)
   }
-  return num
+  return result
 }
