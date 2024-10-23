@@ -7,7 +7,7 @@ import * as G from './generators'
 import * as O from './numeric/operators'
 import * as S from './strings'
 
-import { unsignedBigIntToBase64, base64ToUnsignedBigInt } from './numbers'
+import { base64ToUnsignedBigInt, unsignedBigIntToBase64, compare } from './numbers'
 
 import { fromArray, fromMatrix, filledWithShape, getItem, getItemR } from './ndarrays'
 
@@ -199,7 +199,7 @@ export const similarIds = (R) => (cid) => {
   const C = toConstants(n, id)
   const Ds = similarConstants(R)(C)
   return A.distinct(Ds.flat(1).map((D) => fromConstants(D)[1]))
-    .sort()
+    .sort(compare)
     .map((id) => [n, id])
 }
 

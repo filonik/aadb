@@ -24,3 +24,14 @@ export function base64ToUnsignedBigInt(str) {
   }
   return result
 }
+
+// Compare function that works for BigInt
+export const compare = (a, b) => {
+  if (a > b) {
+    return 1
+  } else if (a < b) {
+    return -1
+  } else {
+    return 0
+  }
+}
