@@ -23,13 +23,21 @@ import * as SO from '@/core/symbolic/operators'
 
 const route = useRoute()
 
+const customNames = (es) => (es ? decodeURI(es).split(',') : [])
+
 const toArrExpr = (array) => SA.filledWithShape(array.shape, N.getItemR(array))
 
 const base = computed(() => {
   const n = parseInt(route.params.n)
   const id = BigInt(route.params.id)
 
-  const es = N.symvec('e', n)
+  const names = customNames(route.query.es)
+
+  const getDefaultName = (i) => `\\mathbf{e}_${i}`
+  const getName = (i) => names[i] ?? getDefaultName(i)
+
+  const es = N.filledWithShape([n], (i) => SO.S(getName(i)))
+  //const es = N.symvec('e', n)
   const xs = N.symvec('x', n)
   const ys = N.symvec('y', n)
 

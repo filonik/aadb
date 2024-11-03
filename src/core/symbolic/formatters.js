@@ -24,7 +24,7 @@ const FORMATS = {
 }
 
 function formatLaTex(node, options) {
-  if (node.type === 'SymbolNode' && node.unescaped) {
+  if (node.type === 'SymbolNode' && (node.unescaped || options.unescaped)) {
     return node.name
   }
 

@@ -1,12 +1,41 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 
+const encodeEs = (es) => encodeURI(es.join(','))
+
+const overrideQuery = {
+  Real: { es: encodeEs(['\\mathbf{1}']) },
+  Complex: { es: encodeEs(['\\mathbf{1}', '\\mathbf{i}']) },
+  Dual: { es: encodeEs(['\\mathbf{1}', '\\varepsilon']) },
+  'Split-Complex': { es: encodeEs(['\\mathbf{1}', '\\mathbf{j}']) },
+  Quaternion: { es: encodeEs(['\\mathbf{1}', '\\mathbf{i}', '\\mathbf{j}', '\\mathbf{k}']) },
+  Cl0: { es: encodeEs(['\\mathbf{1}']) },
+  Cl1: { es: encodeEs(['\\mathbf{1}', '\\mathbf{e}_{0}']) },
+  Cl2: { es: encodeEs(['\\mathbf{1}', '\\mathbf{e}_{0}', '\\mathbf{e}_{1}', '\\mathbf{e}_{01}']) },
+  Cl3: {
+    es: encodeEs([
+      '\\mathbf{1}',
+      '\\mathbf{e}_{0}',
+      '\\mathbf{e}_{1}',
+      '\\mathbf{e}_{01}',
+      '\\mathbf{e}_{2}',
+      '\\mathbf{e}_{02}',
+      '\\mathbf{e}_{12}',
+      '\\mathbf{e}_{012}',
+    ]),
+  },
+}
+
 const examplesCommon = [
-  { name: 'Real', path: '/1/1' },
-  { name: 'Complex', path: '/2/1729' },
-  { name: 'Dual', path: '/2/271' },
-  { name: 'Split-Complex', path: '/2/1000' },
-  { name: 'Quaternion', path: '/4/87982708766312930240990603242' },
+  { name: 'Real', path: '/1/1', query: overrideQuery['Real'] },
+  { name: 'Complex', path: '/2/1729', query: overrideQuery['Complex'] },
+  { name: 'Dual', path: '/2/271', query: overrideQuery['Dual'] },
+  { name: 'Split-Complex', path: '/2/1000', query: overrideQuery['Split-Complex'] },
+  {
+    name: 'Quaternion',
+    path: '/4/87982708766312930240990603242',
+    query: overrideQuery['Quaternion'],
+  },
   //{ name: 'Cross Product 1', path: '/1/3' },
   { name: 'Cross Product 3', path: '/3/22097675691' },
   {
@@ -35,27 +64,54 @@ const examplesQuaternion = [
 ]
 
 const examplesClifford = [
-  { name: 'Cl 0,0,0', path: '/1/1' },
-  { name: 'Cl 1,0,0', path: '/2/1729' },
-  { name: 'Cl 0,1,0', path: '/2/1000' },
-  { name: 'Cl 0,0,1', path: '/2/271' },
-  { name: 'Cl 2,0,0', path: '/4/87982708766312930240990603242' },
-  { name: 'Cl 0,2,0', path: '/4/86470818546388723886198349640' },
-  { name: 'Cl 0,0,2', path: '/4/2153702084870671244963200' },
-  { name: 'Cl 1,1,0', path: '/4/44021510534169686206832405320' },
-  { name: 'Cl 1,0,1', path: '/4/60303439088322520173111469' },
-  { name: 'Cl 0,1,1', path: '/4/118453176091156685244622588' },
+  { name: 'Cl 0,0,0', path: '/1/1', query: overrideQuery['Cl0'] },
+  { name: 'Cl 1,0,0', path: '/2/1729', query: overrideQuery['Cl1'] },
+  { name: 'Cl 0,1,0', path: '/2/1000', query: overrideQuery['Cl1'] },
+  { name: 'Cl 0,0,1', path: '/2/271', query: overrideQuery['Cl1'] },
+  {
+    name: 'Cl 2,0,0',
+    path: '/4/87982708766312930240990603242',
+    query: overrideQuery['Cl2'],
+  },
+  {
+    name: 'Cl 0,2,0',
+    path: '/4/86470818546388723886198349640',
+    query: overrideQuery['Cl2'],
+  },
+  {
+    name: 'Cl 0,0,2',
+    path: '/4/2153702084870671244963200',
+    query: overrideQuery['Cl2'],
+  },
+  {
+    name: 'Cl 1,1,0',
+    path: '/4/44021510534169686206832405320',
+    query: overrideQuery['Cl2'],
+  },
+  {
+    name: 'Cl 1,0,1',
+    path: '/4/60303439088322520173111469',
+    query: overrideQuery['Cl2'],
+  },
+  {
+    name: 'Cl 0,1,1',
+    path: '/4/118453176091156685244622588',
+    query: overrideQuery['Cl2'],
+  },
   {
     name: 'Cl 3,0,0',
     path: '/8/2947877606741412557737611768797470595162847550714492678280524122967592431137128334461990075685653763049855330781781367608950019735413698870334861001741596784162970103330804804798816644013058201973637483078309086214746000665364954822327502644',
+    query: overrideQuery['Cl3'],
   },
   {
     name: 'Cl 0,3,0',
     path: '/8/5893061241925320695001928561510216000600387252076781084132029392250139801751454112852957331945690736589165391925254365430022260977287305615116531141999243036454248384621298708495980984896959154917878461448830249735962520801848381834880929456',
+    query: overrideQuery['Cl3'],
   },
   {
     name: 'Cl 0,0,3',
     path: '/8/12307529841118496228287511460053734694811399751968176398226261328064017367672265720495340459759598437894542692104315429269219980038465582816815990219585323677227728904406543717214225912810108465675528011118780442224492',
+    query: overrideQuery['Cl3'],
   },
   {
     name: 'Cl 4,0,0',
@@ -64,9 +120,13 @@ const examplesClifford = [
 ]
 
 const examplesCayleyDickson = [
-  { name: 'Real', path: '/1/1' },
-  { name: 'Complex', path: '/2/1729' },
-  { name: 'Quaternion', path: '/4/87982708766312930240990603242' },
+  { name: 'Real', path: '/1/1', query: overrideQuery['Real'] },
+  { name: 'Complex', path: '/2/1729', query: overrideQuery['Complex'] },
+  {
+    name: 'Quaternion',
+    path: '/4/87982708766312930240990603242',
+    query: overrideQuery['Quaternion'],
+  },
   {
     name: 'Octonion',
     path: '/8/5891715180497561895294426187604915465679729907063475179880057886686441289330242815996410245927582231635984768464103467903481121496515000823044479921286860560293034329374522620778126655185035612064543002128210274450282103486832419981427522164',
@@ -198,7 +258,9 @@ const groups = [
         <h3>{{ group.name }}</h3>
         <ul>
           <li v-for="example in group.examples" :key="example.path">
-            <RouterLink :to="example.path">{{ example.name }}</RouterLink>
+            <RouterLink :to="{ path: example.path, query: example.query }">{{
+              example.name
+            }}</RouterLink>
           </li>
         </ul>
       </section>

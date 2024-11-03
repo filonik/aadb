@@ -28,6 +28,7 @@ const options = {
   parenthesis: 'auto', // 'keep',
   implicit: 'hide',
   handler: formatLaTex,
+  unescaped: true,
 }
 
 const format = (expr) => {

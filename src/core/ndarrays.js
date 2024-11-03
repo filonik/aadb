@@ -22,12 +22,6 @@ export function filledWithShape(shape, f) {
 
 export const fromArray = (array) => filledWithShape([array.length], A.getItem(array))
 
-export const fromMatrix = (m) => {
-  const shape = [m.rows, m.columns]
-  const data = m.data.map((xs) => Array.from(xs)).flat(1)
-  return ndarray(data, shape)
-}
-
 export const mapWith = (fn) => (array) =>
   filledWithShape(array.shape, (...index) => fn(array.get(...index)))
 

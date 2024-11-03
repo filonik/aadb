@@ -9,7 +9,7 @@ import * as S from './strings'
 
 import { base64ToUnsignedBigInt, unsignedBigIntToBase64, compare } from './numbers'
 
-import { fromArray, fromMatrix, filledWithShape, getItem, getItemR } from './ndarrays'
+import { fromArray, filledWithShape, getItem, getItemR } from './ndarrays'
 
 import { Matrix, inverse, pseudoInverse } from 'ml-matrix'
 
@@ -181,16 +181,32 @@ export const sw =
     return filledWithShape([I, J, K], items)
   }
 
+export const arrayToMatrix = (xs) => {
+  return new Matrix(xs)
+}
+
+export const matrixToArray = (m) => {
+  return m.data.map((xs) => Array.from(xs))
+}
+
+//export const ndArrayToMatrix = () => {}
+
+export const matrixToNdArray = (m) => {
+  const shape = [m.rows, m.columns]
+  const data = matrixToArray(m).flat(1)
+  return ndarray(data, shape)
+}
+
 export const similarConstants = (R) => (C) => {
   const [I, J, K] = C.shape
 
-  const ps = A.permutations(I).map((p) => new Matrix(p))
-  const rs = A.reflections(I).map((r) => new Matrix(r))
+  const ps = A.permutations(I).map(arrayToMatrix)
+  const rs = A.reflections(I).map(arrayToMatrix)
 
   return A.table((r, p) => {
     const rp = r.mmul(p)
     const rpinv = inverse(rp)
-    return sw(R)(C, fromMatrix(rp), fromMatrix(rpinv))
+    return sw(R)(C, matrixToNdArray(rp), matrixToNdArray(rpinv))
   })(rs, ps)
 }
 
