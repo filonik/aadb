@@ -23,23 +23,33 @@ import * as SO from '@/core/symbolic/operators'
 
 const route = useRoute()
 
-const customNames = (es) => (es ? decodeURI(es).split(',') : [])
+const customNames = (xs) => (xs ? decodeURI(xs).split(',') : [])
 
 const toArrExpr = (array) => SA.filledWithShape(array.shape, N.getItemR(array))
+
+const getDefaultE = (i) => `\\mathbf{e}_{${i}}`
+const getDefaultX = (i) => `x^{${i}}`
+const getDefaultY = (i) => `y^{${i}}`
 
 const base = computed(() => {
   const n = parseInt(route.params.n)
   const id = BigInt(route.params.id)
 
-  const names = customNames(route.query.es)
+  const queryEs = customNames(route.query.es)
+  const queryXs = customNames(route.query.xs)
+  const queryYs = customNames(route.query.ys)
 
-  const getDefaultName = (i) => `\\mathbf{e}_${i}`
-  const getName = (i) => names[i] ?? getDefaultName(i)
+  const getE = (i) => queryEs[i] ?? getDefaultE(i)
+  const getX = (i) => queryXs[i] ?? getDefaultX(i)
+  const getY = (i) => queryYs[i] ?? getDefaultY(i)
 
-  const es = N.filledWithShape([n], (i) => SO.S(getName(i)))
+  const es = N.filledWithShape([n], (i) => SO.S(getE(i)))
+  const xs = N.filledWithShape([n], (i) => SO.S(getX(i)))
+  const ys = N.filledWithShape([n], (i) => SO.S(getY(i)))
+
   //const es = N.symvec('e', n)
-  const xs = N.symvec('x', n)
-  const ys = N.symvec('y', n)
+  //const xs = N.symvec('x', n)
+  //const ys = N.symvec('y', n)
 
   const C = AA.toConstants(n, id)
 
