@@ -463,3 +463,300 @@ export const runit = (R) => (C) => {
   const result = trySolve(_A, _b)
   return result ? fromArray(result) : undefined
 }
+
+// Generic Structure Constants
+
+export const GeneralComplex =
+  ({ zero, one, neg }) =>
+  (k) => {
+    const shape = [2, 2, 2]
+    const data = [
+      [
+        [one, zero],
+        [zero, one],
+      ],
+      [
+        [zero, one],
+        [neg(k), zero],
+      ],
+    ]
+    return ndarray(data.flat(2), shape)
+  }
+
+export const Clifford1 =
+  ({ zero, one }) =>
+  (k0) => {
+    const shape = [2, 2, 2]
+    const data = [
+      [
+        [one, zero],
+        [zero, one],
+      ],
+      [
+        [zero, one],
+        [k0, zero],
+      ],
+    ]
+    return ndarray(data.flat(2), shape)
+  }
+
+export const Clifford2 =
+  ({ zero, one, neg, mul }) =>
+  (k0, k1) => {
+    const shape = [4, 4, 4]
+    const data = [
+      [
+        [one, zero, zero, zero],
+        [zero, one, zero, zero],
+        [zero, zero, one, zero],
+        [zero, zero, zero, one],
+      ],
+      [
+        [zero, one, zero, zero],
+        [k0, zero, zero, zero],
+        [zero, zero, zero, one],
+        [zero, zero, k0, zero],
+      ],
+      [
+        [zero, zero, one, zero],
+        [zero, zero, zero, neg(one)],
+        [k1, zero, zero, zero],
+        [zero, neg(k1), zero, zero],
+      ],
+      [
+        [zero, zero, zero, one],
+        [zero, zero, neg(k0), zero],
+        [zero, k1, zero, zero],
+        [neg(mul(k0, k1)), zero, zero, zero],
+      ],
+    ]
+    return ndarray(data.flat(2), shape)
+  }
+
+export const Clifford3 =
+  ({ zero, one, neg, mul }) =>
+  (k0, k1, k2) => {
+    const shape = [8, 8, 8]
+    const data = [
+      [
+        [one, zero, zero, zero, zero, zero, zero, zero],
+        [zero, one, zero, zero, zero, zero, zero, zero],
+        [zero, zero, one, zero, zero, zero, zero, zero],
+        [zero, zero, zero, one, zero, zero, zero, zero],
+        [zero, zero, zero, zero, one, zero, zero, zero],
+        [zero, zero, zero, zero, zero, one, zero, zero],
+        [zero, zero, zero, zero, zero, zero, one, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+      ],
+      [
+        [zero, one, zero, zero, zero, zero, zero, zero],
+        [k0, zero, zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, one, zero, zero, zero, zero],
+        [zero, zero, k0, zero, zero, zero, zero, zero],
+        [zero, zero, zero, zero, zero, one, zero, zero],
+        [zero, zero, zero, zero, k0, zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, zero, zero, k0, zero],
+      ],
+      [
+        [zero, zero, one, zero, zero, zero, zero, zero],
+        [zero, zero, zero, neg(one), zero, zero, zero, zero],
+        [k1, zero, zero, zero, zero, zero, zero, zero],
+        [zero, neg(k1), zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, one, zero],
+        [zero, zero, zero, zero, zero, zero, zero, neg(one)],
+        [zero, zero, zero, zero, k1, zero, zero, zero],
+        [zero, zero, zero, zero, zero, neg(k1), zero, zero],
+      ],
+      [
+        [zero, zero, zero, one, zero, zero, zero, zero],
+        [zero, zero, neg(k0), zero, zero, zero, zero, zero],
+        [zero, k1, zero, zero, zero, zero, zero, zero],
+        [neg(mul(k0, k1)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, zero, zero, neg(k0), zero],
+        [zero, zero, zero, zero, zero, k1, zero, zero],
+        [zero, zero, zero, zero, neg(mul(k0, k1)), zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, one, zero, zero, zero],
+        [zero, zero, zero, zero, zero, neg(one), zero, zero],
+        [zero, zero, zero, zero, zero, zero, neg(one), zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [k2, zero, zero, zero, zero, zero, zero, zero],
+        [zero, neg(k2), zero, zero, zero, zero, zero, zero],
+        [zero, zero, neg(k2), zero, zero, zero, zero, zero],
+        [zero, zero, zero, k2, zero, zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, zero, one, zero, zero],
+        [zero, zero, zero, zero, neg(k0), zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, zero, neg(one)],
+        [zero, zero, zero, zero, zero, zero, k0, zero],
+        [zero, k2, zero, zero, zero, zero, zero, zero],
+        [neg(mul(k0, k2)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, neg(k2), zero, zero, zero, zero],
+        [zero, zero, mul(k0, k2), zero, zero, zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, zero, zero, one, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, neg(k1), zero, zero, zero],
+        [zero, zero, zero, zero, zero, neg(k1), zero, zero],
+        [zero, zero, k2, zero, zero, zero, zero, zero],
+        [zero, zero, zero, k2, zero, zero, zero, zero],
+        [neg(mul(k1, k2)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, neg(mul(k1, k2)), zero, zero, zero, zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, zero, zero, k0, zero],
+        [zero, zero, zero, zero, zero, neg(k1), zero, zero],
+        [zero, zero, zero, zero, neg(mul(k0, k1)), zero, zero, zero],
+        [zero, zero, zero, k2, zero, zero, zero, zero],
+        [zero, zero, mul(k0, k2), zero, zero, zero, zero, zero],
+        [zero, neg(mul(k1, k2)), zero, zero, zero, zero, zero, zero],
+        [neg(mul(mul(k0, k1), k2)), zero, zero, zero, zero, zero, zero, zero],
+      ],
+    ]
+    return ndarray(data.flat(2), shape)
+  }
+
+export const Clifford2Even =
+  ({ zero, one, neg, mul }) =>
+  (k0, k1) => {
+    const shape = [2, 2, 2]
+    const data = [
+      [
+        [one, zero],
+        [zero, one],
+      ],
+      [
+        [zero, one],
+        [neg(mul(k0, k1)), zero],
+      ],
+    ]
+    return ndarray(data.flat(2), shape)
+  }
+
+export const Clifford3Even =
+  ({ zero, one, neg, mul }) =>
+  (k0, k1, k2) => {
+    const shape = [4, 4, 4]
+    const data = [
+      [
+        [one, zero, zero, zero],
+        [zero, one, zero, zero],
+        [zero, zero, one, zero],
+        [zero, zero, zero, one],
+      ],
+      [
+        [zero, one, zero, zero],
+        [neg(mul(k0, k1)), zero, zero, zero],
+        [zero, zero, zero, neg(k0)],
+        [zero, zero, k1, zero],
+      ],
+      [
+        [zero, zero, one, zero],
+        [zero, zero, zero, k0],
+        [neg(mul(k0, k2)), zero, zero, zero],
+        [zero, neg(k2), zero, zero],
+      ],
+      [
+        [zero, zero, zero, one],
+        [zero, zero, neg(k1), zero],
+        [zero, k2, zero, zero],
+        [neg(mul(k1, k2)), zero, zero, zero],
+      ],
+    ]
+    return ndarray(data.flat(2), shape)
+  }
+
+export const Clifford4Even =
+  ({ zero, one, neg, mul }) =>
+  (k0, k1, k2, k3) => {
+    const shape = [8, 8, 8]
+    const data = [
+      [
+        [one, zero, zero, zero, zero, zero, zero, zero],
+        [zero, one, zero, zero, zero, zero, zero, zero],
+        [zero, zero, one, zero, zero, zero, zero, zero],
+        [zero, zero, zero, one, zero, zero, zero, zero],
+        [zero, zero, zero, zero, one, zero, zero, zero],
+        [zero, zero, zero, zero, zero, one, zero, zero],
+        [zero, zero, zero, zero, zero, zero, one, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+      ],
+      [
+        [zero, one, zero, zero, zero, zero, zero, zero],
+        [neg(mul(k0, k1)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, neg(k0), zero, zero, zero, zero],
+        [zero, zero, k1, zero, zero, zero, zero, zero],
+        [zero, zero, zero, zero, zero, neg(k0), zero, zero],
+        [zero, zero, zero, zero, k1, zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, zero, zero, neg(mul(k0, k1)), zero],
+      ],
+      [
+        [zero, zero, one, zero, zero, zero, zero, zero],
+        [zero, zero, zero, k0, zero, zero, zero, zero],
+        [neg(mul(k0, k2)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, neg(k2), zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, neg(k0), zero],
+        [zero, zero, zero, zero, zero, zero, zero, neg(one)],
+        [zero, zero, zero, zero, k2, zero, zero, zero],
+        [zero, zero, zero, zero, zero, mul(k0, k2), zero, zero],
+      ],
+      [
+        [zero, zero, zero, one, zero, zero, zero, zero],
+        [zero, zero, neg(k1), zero, zero, zero, zero, zero],
+        [zero, k2, zero, zero, zero, zero, zero, zero],
+        [neg(mul(k1, k2)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, zero, zero, neg(k1), zero],
+        [zero, zero, zero, zero, zero, k2, zero, zero],
+        [zero, zero, zero, zero, neg(mul(k1, k2)), zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, one, zero, zero, zero],
+        [zero, zero, zero, zero, zero, k0, zero, zero],
+        [zero, zero, zero, zero, zero, zero, k0, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [neg(mul(k0, k3)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, neg(k3), zero, zero, zero, zero, zero, zero],
+        [zero, zero, neg(k3), zero, zero, zero, zero, zero],
+        [zero, zero, zero, neg(mul(k0, k3)), zero, zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, zero, one, zero, zero],
+        [zero, zero, zero, zero, neg(k1), zero, zero, zero],
+        [zero, zero, zero, zero, zero, zero, zero, neg(one)],
+        [zero, zero, zero, zero, zero, zero, k1, zero],
+        [zero, k3, zero, zero, zero, zero, zero, zero],
+        [neg(mul(k1, k3)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, zero, zero, neg(k3), zero, zero, zero, zero],
+        [zero, zero, mul(k1, k3), zero, zero, zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, zero, zero, one, zero],
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, neg(k2), zero, zero, zero],
+        [zero, zero, zero, zero, zero, neg(k2), zero, zero],
+        [zero, zero, k3, zero, zero, zero, zero, zero],
+        [zero, zero, zero, k3, zero, zero, zero, zero],
+        [neg(mul(k2, k3)), zero, zero, zero, zero, zero, zero, zero],
+        [zero, neg(mul(k2, k3)), zero, zero, zero, zero, zero, zero],
+      ],
+      [
+        [zero, zero, zero, zero, zero, zero, zero, one],
+        [zero, zero, zero, zero, zero, zero, neg(mul(k0, k1)), zero],
+        [zero, zero, zero, zero, zero, mul(k0, k2), zero, zero],
+        [zero, zero, zero, zero, neg(mul(k1, k2)), zero, zero, zero],
+        [zero, zero, zero, neg(mul(k0, k3)), zero, zero, zero, zero],
+        [zero, zero, mul(k1, k3), zero, zero, zero, zero, zero],
+        [zero, neg(mul(k2, k3)), zero, zero, zero, zero, zero, zero],
+        [mul(mul(mul(k0, k1), k2), k3), zero, zero, zero, zero, zero, zero, zero],
+      ],
+    ]
+    return ndarray(data.flat(2), shape)
+  }

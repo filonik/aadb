@@ -340,6 +340,17 @@ const examplesGroups = [
   },
 ]
 
+const examplesDerivatives = [
+  // Value () + Gradient (n)
+  { name: 'First Order 1', path: '/2/271' },
+  { name: 'First Order 2', path: '/3/3486850093' },
+  { name: 'First Order 3', path: '/4/2153693979752739609525679' },
+  // Value () + Gradient (n) + Hessian (n,n)
+  //{ name: 'Second Order 1', path: '/3/?' },
+  //{ name: 'Second Order 2', path: '/7/?',},
+  //{ name: 'Second Order 3', path: '/13/?' },
+]
+
 const groups = [
   { name: 'Common', examples: examplesCommon },
   { name: 'Cayley Dickson Construction', examples: examplesCayleyDickson },
@@ -347,11 +358,12 @@ const groups = [
   { name: 'Clifford Algebras', examples: examplesClifford },
   { name: 'Groups', examples: examplesGroups },
   { name: 'n-Plex Numbers', examples: examplesNPlex },
-  { name: 'Olariu', examples: examplesOlariu },
+  { name: 'Derivatives', examples: examplesDerivatives },
   { name: 'Sums and Products', examples: examplesSumProduct },
   //{ name: 'Matrices', examples: examplesMatrix },
   //{ name: 'Other', examples: examplesOther },
   { name: 'Other', examples: [...examplesOther, ...examplesMatrix] },
+  { name: 'Olariu', examples: examplesOlariu },
 ]
 </script>
 

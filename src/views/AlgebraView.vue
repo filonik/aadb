@@ -21,15 +21,15 @@ import { RR } from '@/core/numeric/operators'
 import * as SA from '@/core/symbolic/arrays'
 import * as SO from '@/core/symbolic/operators'
 
-const route = useRoute()
-
-const customNames = (xs) => (xs ? decodeURI(xs).split(',') : [])
-
 const toArrExpr = (array) => SA.filledWithShape(array.shape, N.getItemR(array))
+
+const route = useRoute()
 
 const getDefaultE = (i) => `\\mathbf{e}_{${i}}`
 const getDefaultX = (i) => `x^{${i}}`
 const getDefaultY = (i) => `y^{${i}}`
+
+const customNames = (xs) => (xs ? decodeURI(xs).split(',') : [])
 
 const base = computed(() => {
   const n = parseInt(route.params.n)
