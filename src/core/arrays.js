@@ -66,6 +66,8 @@ export const CartesianMul = {
 
 export const cartesianProduct = reduce(CartesianMul)
 
+export const cartesianWith = (fn) => (...arrays) => cartesianProduct(arrays).map((args) => fn(...args))
+
 export const indices = (shape) => cartesianProduct(shape.map((upper) => range(0, upper)))
 
 export const distinct = (xs) => [...new Set(xs)]

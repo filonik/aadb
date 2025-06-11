@@ -56,9 +56,15 @@ export const symmat = (name, length) => symarr(name, [length, length])
 export const unit = (n, k) => filledWithShape([n], (i) => (i == k ? 1 : 0))
 export const eye = (n, m) => filledWithShape([n, m], (i, j) => (i == j ? 1 : 0))
 
+export const table = (f) => (xs, ys) => {
+  const m = A.length(xs.data)
+  const n = A.length(ys.data)
+  return filledWithShape([m, n], (i, j) => f(A.getItem(xs.data)(i), A.getItem(ys.data)(j)))
+}
+
 export const reflection = (rs) => {
-  const n = rs.length
-  return filledWithShape([n, n], (i, j) => (i == j ? (rs[i] ? -1 : +1) : 0))
+  const n = A.length(rs)
+  return filledWithShape([n, n], (i, j) => (i == j ? (A.getItem(rs)(i)? -1 : +1) : 0))
 }
 
 export const reflections = (n) => {
@@ -67,8 +73,8 @@ export const reflections = (n) => {
 }
 
 export const permutation = (ps) => {
-  const n = ps.length
-  return filledWithShape([n, n], (i, j) => (i == ps[j] ? 1 : 0))
+  const n = A.length(ps)
+  return filledWithShape([n, n], (i, j) => (i == A.getItem(ps)(j)? 1 : 0))
 }
 
 export const permutations = (n) => {
