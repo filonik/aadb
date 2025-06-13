@@ -204,11 +204,11 @@ const aaCommutatorTable = computed(() => {
 
   const _toExpr = AA.toExpr(SR)
 
-  const defaultBasis = A.filledWithShape([n], (i) =>
+  const defaultBasis = N.filledWithShape([n], (i) =>
     N.filledWithShape([n], (j) => (i == j ? SO.C(1) : SO.C(0))),
   )
 
-  const _commutatorTable = AA.table(commutator(SA))(defaultBasis)
+  const _commutatorTable = N.table(commutator(SA))(defaultBasis, defaultBasis)
   const commutatorTable = N.mapWith((x) => simplify(_toExpr(es)(x)))(_commutatorTable)
 
   return commutatorTable
@@ -219,13 +219,28 @@ const aaAntiCommutatorTable = computed(() => {
 
   const _toExpr = AA.toExpr(SR)
 
-  const defaultBasis = A.filledWithShape([n], (i) =>
+  const defaultBasis = N.filledWithShape([n], (i) =>
     N.filledWithShape([n], (j) => (i == j ? SO.C(1) : SO.C(0))),
   )
-  const _commutatorTable = AA.table(antiCommutator(SA))(defaultBasis)
+  const _commutatorTable = N.table(antiCommutator(SA))(defaultBasis, defaultBasis)
   const commutatorTable = N.mapWith((x) => simplify(_toExpr(es)(x)))(_commutatorTable)
 
   return commutatorTable
+})
+
+const aaMagma = computed(() => {
+  const { C, es } = base.value
+
+  const _mul =  AA.mul(RR)(C)
+  const _toExpr = AA.toExpr(SR)
+
+  const _magmaEs = N.fromArray(AA.saturate(RR)(C))
+  const magmaEs = N.mapWith((x) => simplify(_toExpr(es)(N.mapWith(SO.C)(x))))(_magmaEs)
+
+  const _magmaM = N.table(_mul)(_magmaEs, _magmaEs)
+  const magmaM = N.mapWith((x) => simplify(_toExpr(es)(N.mapWith(SO.C)(x))))(_magmaM)
+
+  return { es: magmaEs, M: magmaM }
 })
 </script>
 
@@ -245,6 +260,7 @@ const aaAntiCommutatorTable = computed(() => {
         Algebra
         <sub style="overflow: hidden; text-overflow: ellipsis">{{ aa.n }}/{{ aa.id }}</sub>
       </h2>
+      <RouterLink :to="{path:`/${aa.n}/${aa.id}/graph`, query: route.query}">Graph</RouterLink>
       <RouterLink :to="`/${aa.n}/${aa.prevId}`">&lt;&lt;</RouterLink>
       <RouterLink :to="`/${aa.n}/${aa.nextId}`">&gt;&gt;</RouterLink>
     </section>
@@ -324,6 +340,17 @@ const aaAntiCommutatorTable = computed(() => {
         </section>
       </DetailsOutput>
     </section>
+    <!--
+    <section>
+      <DetailsOutput>
+        <template v-slot:summary>Magma</template>
+        <section>
+           <h4>Multiplication Table</h4>
+          <MultiplicationTable :value="aaMagma.M" :headers="aaMagma.es" :title="'\\mathbf{x}\\mathbf{y}'" />
+        </section>
+      </DetailsOutput>
+    </section>
+    -->
     <section>
       <DetailsOutput>
         <template v-slot:summary>Structure Constants</template>

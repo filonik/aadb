@@ -1,17 +1,18 @@
 import ndarray from 'ndarray'
 
-//import * as bigintConversion from 'bigint-conversion'
-
-import * as A from './arrays'
-import * as G from './generators'
-import * as O from './numeric/operators'
-import * as S from './strings'
-
-import { base64ToUnsignedBigInt, unsignedBigIntToBase64, compare } from './numbers'
-
-import { fromArray, filledWithShape, getItem, getItemR } from './ndarrays'
+import keyalesce from 'keyalesce'
 
 import { Matrix, inverse, pseudoInverse } from 'ml-matrix'
+
+//import * as bigintConversion from 'bigint-conversion'
+
+import * as A from '../arrays'
+import * as G from '../generators'
+import * as N from '../ndarrays'
+import * as O from '../numeric/operators'
+import * as S from '../strings'
+
+import { base64ToUnsignedBigInt, unsignedBigIntToBase64, compare } from '../numbers'
 
 const groupBySorted = (x) => JSON.stringify(x.toSorted())
 
@@ -103,8 +104,8 @@ export const mulTable =
   (es) => {
     const [I, J, K] = C.shape
     const sum = A.reduce({ append: add, empty: zero })
-    const items = (i, j) => sum(A.range(0, K).map((k) => mul(getItemR(C)(i, j, k), getItem(es)(k))))
-    return filledWithShape([I, J], items)
+    const items = (i, j) => sum(A.range(0, K).map((k) => mul(N.getItemR(C)(i, j, k), N.getItem(es)(k))))
+    return N.filledWithShape([I, J], items)
   }
 
 export const matReprL =
@@ -114,8 +115,8 @@ export const matReprL =
     const [I, J, K] = C.shape
     //const items = (j, k) => sum({ items: range(0, head).map((i) => mul(getItemR(C)(i, j, k), getItem(xs)(i))) })
     const sum = A.reduce({ append: add, empty: zero })
-    const items = (k, j) => sum(A.range(0, I).map((i) => mul(getItemR(C)(i, j, k), getItem(xs)(i))))
-    return filledWithShape([K, J], items)
+    const items = (k, j) => sum(A.range(0, I).map((i) => mul(N.getItemR(C)(i, j, k), N.getItem(xs)(i))))
+    return N.filledWithShape([K, J], items)
   }
 
 export const matReprR =
@@ -125,8 +126,8 @@ export const matReprR =
     const [I, J, K] = C.shape
     //const items = (j, k) => sum({ items: range(0, head).map((i) => mul(getItemR(C)(i, j, k), getItem(xs)(i))) })
     const sum = A.reduce({ append: add, empty: zero })
-    const items = (k, i) => sum(A.range(0, J).map((j) => mul(getItemR(C)(i, j, k), getItem(xs)(j))))
-    return filledWithShape([K, I], items)
+    const items = (k, i) => sum(A.range(0, J).map((j) => mul(N.getItemR(C)(i, j, k), N.getItem(xs)(j))))
+    return N.filledWithShape([K, I], items)
   }
 
 export const mul =
@@ -140,12 +141,12 @@ export const mul =
         A.range(0, J).map((j) =>
           sum(
             A.range(0, I).map((i) =>
-              mul(mul(getItemR(C)(i, j, k), getItem(xs)(i)), getItem(ys)(j)),
+              mul(mul(N.getItemR(C)(i, j, k), N.getItem(xs)(i)), N.getItem(ys)(j)),
             ),
           ),
         ),
       )
-    return filledWithShape([K], items)
+    return N.filledWithShape([K], items)
   }
 
 /*
@@ -169,8 +170,8 @@ export const sw =
               sum(
                 A.range(0, K).map((c) =>
                   mul(
-                    mul(mul(getItemR(P)(k, c), getItemR(C)(a, b, c)), getItemR(Pinv)(a, i)),
-                    getItemR(Pinv)(b, j),
+                    mul(mul(N.getItemR(P)(k, c), N.getItemR(C)(a, b, c)), N.getItemR(Pinv)(a, i)),
+                    N.getItemR(Pinv)(b, j),
                   ),
                 ),
               ),
@@ -178,7 +179,7 @@ export const sw =
           ),
         ),
       )
-    return filledWithShape([I, J, K], items)
+    return N.filledWithShape([I, J, K], items)
   }
 
 export const arrayToMatrix = (xs) => {
@@ -221,20 +222,20 @@ export const similarIds = (R) => (cid) => {
 
 export const mapL = (f) => (C) => (xs, y) => {
   const [I, J, K] = C.shape
-  const items = (i) => f(getItem(xs)(i), y)
-  return filledWithShape([I], items)
+  const items = (i) => f(N.getItem(xs)(i), y)
+  return N.filledWithShape([I], items)
 }
 
 export const mapR = (f) => (C) => (x, ys) => {
   const [I, J, K] = C.shape
-  const items = (i) => f(x, getItem(ys)(i))
-  return filledWithShape([I], items)
+  const items = (i) => f(x, N.getItem(ys)(i))
+  return N.filledWithShape([I], items)
 }
 
 export const mapLR = (f) => (C) => (xs, ys) => {
   const [I, J, K] = C.shape
-  const items = (i) => f(getItem(xs)(i), getItem(ys)(i))
-  return filledWithShape([I], items)
+  const items = (i) => f(N.getItem(xs)(i), N.getItem(ys)(i))
+  return N.filledWithShape([I], items)
 }
 
 export const add = ({ add }) => mapLR(add)
@@ -244,12 +245,6 @@ export const adds = ({ add }) => mapL(add)
 export const subs = ({ sub }) => mapL(sub)
 export const muls = ({ mul }) => mapL(mul)
 export const divs = ({ div }) => mapL(div)
-
-export const table = (f) => (es) => {
-  const N = A.length(es)
-  const items = (i, j) => f(A.getItem(es)(i), A.getItem(es)(j))
-  return filledWithShape([N, N], items)
-}
 
 export const toExpr =
   ({ zero, add, mul }) =>
@@ -265,8 +260,8 @@ export const isQCommutative =
   (C) => {
     const [I, J, K] = C.shape
     for (let [i, j, k] of A.indices([I, J, K])) {
-      const lhs = getItemR(C)(i, j, k)
-      const rhs = getItemR(C)(j, i, k)
+      const lhs = N.getItemR(C)(i, j, k)
+      const rhs = N.getItemR(C)(j, i, k)
       if (lhs != mul(q, rhs)) {
         return false
       }
@@ -281,8 +276,8 @@ export const isQAssociative =
     const [I, J, K] = C.shape
     const sum = A.reduce({ append: add, empty: zero })
     for (let [a, b, d, e] of A.indices([I, I, I, I])) {
-      const lhs = sum(A.range(0, I).map((c) => mul(getItemR(C)(c, d, e), getItemR(C)(a, b, c))))
-      const rhs = sum(A.range(0, I).map((c) => mul(getItemR(C)(a, c, e), getItemR(C)(b, d, c))))
+      const lhs = sum(A.range(0, I).map((c) => mul(N.getItemR(C)(c, d, e), N.getItemR(C)(a, b, c))))
+      const rhs = sum(A.range(0, I).map((c) => mul(N.getItemR(C)(a, c, e), N.getItemR(C)(b, d, c))))
       if (lhs != mul(q, rhs)) {
         return false
       }
@@ -301,12 +296,12 @@ export const isQLeftAlternative =
       for (let js of Object.values(JS)) {
         const lhs = sum(
           js.map(([[j0, j1], [j2]]) =>
-            sum(A.range(0, I).map((i) => mul(getItemR(C)(i, j0, k), getItemR(C)(j2, j1, i)))),
+            sum(A.range(0, I).map((i) => mul(N.getItemR(C)(i, j0, k), N.getItemR(C)(j2, j1, i)))),
           ),
         )
         const rhs = sum(
           js.map(([[j0, j1], [j2]]) =>
-            sum(A.range(0, I).map((i) => mul(getItemR(C)(j2, i, k), getItemR(C)(j1, j0, i)))),
+            sum(A.range(0, I).map((i) => mul(N.getItemR(C)(j2, i, k), N.getItemR(C)(j1, j0, i)))),
           ),
         )
         if (lhs != mul(q, rhs)) {
@@ -336,12 +331,12 @@ export const isQRightAlternative =
       for (let js of Object.values(JS)) {
         const lhs = sum(
           js.map(([[j0, j1], [j2]]) =>
-            sum(A.range(0, I).map((i) => mul(getItemR(C)(i, j2, k), getItemR(C)(j0, j1, i)))),
+            sum(A.range(0, I).map((i) => mul(N.getItemR(C)(i, j2, k), N.getItemR(C)(j0, j1, i)))),
           ),
         )
         const rhs = sum(
           js.map(([[j0, j1], [j2]]) =>
-            sum(A.range(0, I).map((i) => mul(getItemR(C)(j0, i, k), getItemR(C)(j1, j2, i)))),
+            sum(A.range(0, I).map((i) => mul(N.getItemR(C)(j0, i, k), N.getItemR(C)(j1, j2, i)))),
           ),
         )
         if (lhs != mul(q, rhs)) {
@@ -367,12 +362,12 @@ export const isQPowerAssociative =
       for (let js of Object.values(JS)) {
         const lhs = sum(
           js.map(([j0, j1, j2]) =>
-            sum(A.range(0, I).map((i) => mul(getItemR(C)(j0, i, k), getItemR(C)(j1, j2, i)))),
+            sum(A.range(0, I).map((i) => mul(N.getItemR(C)(j0, i, k), N.getItemR(C)(j1, j2, i)))),
           ),
         )
         const rhs = sum(
           js.map(([j0, j1, j2]) =>
-            sum(A.range(0, I).map((i) => mul(getItemR(C)(i, j0, k), getItemR(C)(j1, j2, i)))),
+            sum(A.range(0, I).map((i) => mul(N.getItemR(C)(i, j0, k), N.getItemR(C)(j1, j2, i)))),
           ),
         )
         if (lhs != mul(q, rhs)) {
@@ -389,9 +384,9 @@ export const isJacobian =
     const [I, J, K] = C.shape
     const sum = A.reduce({ append: add, empty: zero })
     for (let [a, b, c, e] of A.indices([I, I, I, I])) {
-      const abc = sum(A.range(0, I).map((d) => mul(getItemR(C)(a, d, e), getItemR(C)(b, c, d))))
-      const bca = sum(A.range(0, I).map((d) => mul(getItemR(C)(b, d, e), getItemR(C)(c, a, d))))
-      const cab = sum(A.range(0, I).map((d) => mul(getItemR(C)(c, d, e), getItemR(C)(a, b, d))))
+      const abc = sum(A.range(0, I).map((d) => mul(N.getItemR(C)(a, d, e), N.getItemR(C)(b, c, d))))
+      const bca = sum(A.range(0, I).map((d) => mul(N.getItemR(C)(b, d, e), N.getItemR(C)(c, a, d))))
+      const cab = sum(A.range(0, I).map((d) => mul(N.getItemR(C)(c, d, e), N.getItemR(C)(a, b, d))))
       if (sum([abc, bca, cab]) != zero) {
         return false
       }
@@ -436,7 +431,7 @@ export const lunit = (R) => (C) => {
   const _A = A.filledWithShape([I * J, K], (ij, k) => {
     const i = O.quo(ij, J)
     const j = O.rem(ij, J)
-    return getItemR(C)(k, j, i)
+    return N.getItemR(C)(k, j, i)
   })
   const _b = A.filledWithShape([I * J, 1], (ij, k) => {
     const i = O.quo(ij, J)
@@ -444,7 +439,7 @@ export const lunit = (R) => (C) => {
     return i == j ? 1 : 0
   })
   const result = trySolve(_A, _b)
-  return result ? fromArray(result) : undefined
+  return result ? N.fromArray(result) : undefined
 }
 
 export const runit = (R) => (C) => {
@@ -452,7 +447,7 @@ export const runit = (R) => (C) => {
   const _A = A.filledWithShape([I * J, K], (ij, k) => {
     const i = O.quo(ij, J)
     const j = O.rem(ij, J)
-    return getItemR(C)(j, k, i)
+    return N.getItemR(C)(j, k, i)
   })
 
   const _b = A.filledWithShape([I * J, 1], (ij, k) => {
@@ -461,7 +456,40 @@ export const runit = (R) => (C) => {
     return i == j ? 1 : 0
   })
   const result = trySolve(_A, _b)
-  return result ? fromArray(result) : undefined
+  return result ? N.fromArray(result) : undefined
+}
+
+export const defaultBasis = ({zero, one}) => {
+  const unit = (n,k) => N.filledWithShape([n], (i) => i==k? one: zero)
+  const units = (n) => A.filledWithShape([n], (k) => unit(n, k))
+  return units
+}
+
+export const saturate = (R) => (C, n=2) => {
+  const [I, J, K] = C.shape
+  
+  const _mul = mul(R)(C)
+
+  const unit = (n,k) => N.filledWithShape([n], (i) => i==k? 1: 0)
+  const units = (n) => A.filledWithShape([n], (k) => unit(n,k))
+
+  const toArray = (xs) => xs.data
+  const toMap = (values) => new Map(values.map((e) => [keyalesce(toArray(e)), e]))
+
+  let result = toMap(units(I))
+
+  for(let i=0; i<n; i++) {
+    const values = Array.from(result.values())
+    const newValues = A.cartesianWith(_mul)(values, values)
+
+    const oldResult = result
+    const newResult = new Map([...oldResult, ...toMap(newValues)])
+    result = newResult
+
+    if (newResult.size <= oldResult.size) break
+  }
+
+  return Array.from(result.values())
 }
 
 // Generic Structure Constants

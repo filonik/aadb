@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import AlgebraView from '@/views/AlgebraView.vue'
 import AlgebraHomorphismsView from '@/views/AlgebraHomorphismsView.vue'
+import GraphView from '@/views/GraphView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,11 @@ const router = createRouter({
         id: BigInt(route.params.id)
       })
       */
+    },
+    {
+      path: '/:n/:id/graph',
+      name: 'graph',
+      component: GraphView,
     },
     {
       path: '/:n/:id/similar',

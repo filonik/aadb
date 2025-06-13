@@ -1,5 +1,6 @@
 import ndarray from 'ndarray'
 import ndarrayGemm from 'ndarray-gemm'
+import ndarrayGemv from 'ndarray-blas-gemv'
 //import ndarrayFill from 'ndarray-fill'
 import ndarrayShow from 'ndarray-show'
 
@@ -79,6 +80,12 @@ export const permutation = (ps) => {
 
 export const permutations = (n) => {
   return A.permutations(A.range(0, n)).map(permutation)
+}
+
+export const vecmul = (A, b) => {
+  const result = filledWithShape([A.shape[0]], () => 0)
+  ndarrayGemv(1, A, b, 1, result)
+  return result
 }
 
 export const matmul = (a, b) => {

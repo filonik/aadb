@@ -98,3 +98,15 @@ export const permutations = (n) => {
 
 export const table = (f) => (xs, ys) =>
   range(0, xs.length).map((i) => range(0, ys.length).map((j) => f(xs[i], ys[j])))
+
+export const distinctBy = (f) => (xs) => {
+  const toMap = (xs) => new Map(xs.map((x) => [f(x), x]))
+  const fromMap = (xs) => Array.from(xs.values())
+  return fromMap(toMap(xs))
+}
+
+export const unionBy = (f) => (xs, ys) => {
+  const toMap = (xs) => new Map(xs.map((x) => [f(x), x]))
+  const fromMap = (xs) => Array.from(xs.values())
+  return fromMap(new Map([...toMap(xs), ...toMap(ys)]))
+}
