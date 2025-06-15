@@ -48,6 +48,12 @@ const state = reactive({
     generatorIds: [],
     iterations: 3,
     mulLeft: false,
+    view: {
+        scale: [1, 1]
+    },
+    V: computed(() => {
+        return N.filledWithShape([2,2], (i,j) => i==j? state.view.scale[i]: 0)
+    }),
     transform: computed(() => {
         const [x, y] = [state.size[0]/2, state.size[1]/2]
         return `scale(${x}, ${-y}) translate(1,-1) scale(0.75, 0.75)`
@@ -99,7 +105,7 @@ const aaGraph = computed(() => {
     const _mulL = (y) => (x) =>  [y, _mul(x, y), x]
 
     const _valueKey = (x) => keyalesce(x.data)
-    const _relationKey = ([s,t,g]) => keyalesce([...s.data, ...t.data, ...g.data])
+    const _relationKey = ([s,t,g]) => keyalesce([keyalesce(s.data), keyalesce(t.data), keyalesce(g.data)])
 
     const _unionValues = A.unionBy(_valueKey)
     const _unionRelations = A.unionBy(_relationKey)
@@ -116,7 +122,7 @@ const aaGraph = computed(() => {
     }
 
     const nodes = new Map(values.map((x) => {
-        const p = N.vecmul(P, x)
+        const p = N.vecmul(state.V, N.vecmul(P, x))
         return [_valueKey(x), {
             x: N.getItem(p)(0),
             y: N.getItem(p)(1),
@@ -133,7 +139,6 @@ const aaGraph = computed(() => {
         }]
     }))
 
-    console.log(links)
     return {
         nodes, links
     }
@@ -156,11 +161,21 @@ const { render } = useMathJax(rootRef)
 
 watch(aa, render)
 watch(state, render)
+
+const onWheel = (e) => {
+    e.preventDefault()
+    const delta = 1.0 + e.deltaY/1000.0
+    state.view.scale[0] *= delta
+    state.view.scale[1] *= delta
+}
 </script>
 
 <template>
     <main ref="rootRef" style="display: flex; flex-direction: column; gap: 1rem">
-        <h2>Graph</h2>
+        <section style="display: flex; flex-direction: row">
+            <h2 style="flex-grow: 1;">Graph</h2>
+            <RouterLink :to="{path:`/${aa.n}/${aa.id}`, query: route.query}">Back</RouterLink>
+        </section>
         <ToggleGroup style="display: flex; flex-direction: row; align-items: center; justify-content: center;" v-model="state.generatorIds">
             <ToggleGroupItem v-for="(e, i) in aa.basis" :key="i" :value="i"  v-slot="{selected}" >
                 <div style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem;" :style="{'background-color':selected? DEFAULT_PALETTE_FILL[i]: 'var(--color-background-mute)'}">
@@ -174,23 +189,27 @@ watch(state, render)
             <button @click="onIncrement">+</button>
         </div>
         <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
-            <svg :width="state.size[0]" :height="state.size[1]">
+            <svg :width="state.size[0]" :height="state.size[1]" @wheel="onWheel">
                 <defs>
                     <marker id="arrow" markerWidth="10" markerHeight="10" refX="15" refY="3" orient="auto" markerUnits="strokeWidth" fill="context-stroke">
                         <path d="M0,0 L0,6 L9,3 z"/>
                     </marker>
                 </defs>
                 <g :transform="state.transform">
-                    <g v-for="(link, i) in aaGraph.links.values()" :key="i">
-                        <line :x1="link.source.x" :y1="link.source.y" :x2="link.target.x" :y2="link.target.y" :stroke="link.stroke"  marker-end="url(#arrow)" />
+                    <g>
+                        <g v-for="(link, i) in aaGraph.links.values()" :key="i">
+                            <line :x1="link.source.x" :y1="link.source.y" :x2="link.target.x" :y2="link.target.y" :stroke="link.stroke"  marker-end="url(#arrow)" />
+                        </g>
                     </g>
-                    <g v-for="(node, i) in aaGraph.nodes.values()" :key="i" :transform="`translate(${node.x},${node.y}) scale(0.01,-0.01)`">
-                        <circle cx="0" cy="0" r="5" stroke-width="1" />
-                        <foreignObject x="-40" y="-40" width="80" height="40">
-                            <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; color: var(--color-text); height:100%;">
-                                ${{ format(toExpr(aa.es)(node.value)) }}$
-                            </div>
-                        </foreignObject>
+                    <g>
+                        <g v-for="(node, i) in aaGraph.nodes.values()" :key="i" :transform="`translate(${node.x},${node.y}) scale(0.01,-0.01)`">
+                            <circle cx="0" cy="0" r="5" stroke-width="1" />
+                            <foreignObject x="-40" y="-40" width="80" height="40">
+                                <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; color: var(--color-text); height:100%;">
+                                    ${{ format(toExpr(aa.es)(node.value)) }}$
+                                </div>
+                            </foreignObject>
+                        </g>
                     </g>
                 </g>
             </svg>
