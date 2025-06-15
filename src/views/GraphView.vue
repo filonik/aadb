@@ -47,6 +47,7 @@ const state = reactive({
     size: [320, 320],
     generatorIds: [],
     iterations: 3,
+    mulLeft: false,
     transform: computed(() => {
         const [x, y] = [state.size[0]/2, state.size[1]/2]
         return `scale(${x}, ${-y}) translate(1,-1) scale(0.75, 0.75)`
@@ -93,6 +94,9 @@ const aaGraph = computed(() => {
     const P = N.filledWithShape([2,n], (i, j) => i==0? Math.sin(Math.PI*j/n): Math.cos(Math.PI*j/n))
     
     const _mul = AA.mul(RR)(C)
+    
+    const _mulR = (x) => (y) =>  [x, _mul(x, y), y]
+    const _mulL = (y) => (x) =>  [y, _mul(x, y), x]
 
     const _valueKey = (x) => keyalesce(x.data)
     const _relationKey = ([s,t,g]) => keyalesce([...s.data, ...t.data, ...g.data])
@@ -105,7 +109,7 @@ const aaGraph = computed(() => {
     let relations = []
     let values = basis
     for (let i=0; i<state.iterations; i++) {
-        let newRelations = values.flatMap((x) => generators.map((g) => [x, _mul(g, x), g]))
+        let newRelations = state.mulLeft? values.flatMap((y) => generators.map(_mulL(y))): values.flatMap((x) => generators.map(_mulR(x)))
         let newValues = newRelations.map((r) => r[1])
         relations = _unionRelations(relations, newRelations)
         values = _unionValues(values, newValues)
@@ -191,6 +195,7 @@ watch(state, render)
                 </g>
             </svg>
         </div>
+        <!-- <input type="checkbox" v-model="state.mulLeft"/> -->
     </main>
 </template>
 
